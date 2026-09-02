@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { postBySlug, publishedPosts } from '@/lib/blog/posts';
+import { bodyBlocks, postBySlug, publishedPosts } from '@/lib/blog/content';
+import { hasLegacyBody } from '@/lib/blog/legacy-bodies';
 import { pageOg } from '@/lib/site';
 import { BlogPostingJsonLd } from '@/components/layout/JsonLd';
 import ArticleBody from './ArticleBody';
@@ -15,16 +16,29 @@ import ArticleChrome from './ArticleChrome';
  * posts into Postgres, this route keeps its shape: swap postBySlug/publishedPosts
  * for queries and render the stored body.
  */
-export function generateStaticParams() {
-  return publishedPosts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await publishedPosts()).map((p) => ({ slug: p.slug }));
 }
 
-export const dynamicParams = false;
+/**
+ * True, now that posts come from the database.
+ *
+ * It was false while the post list was a compile-time constant, and that was
+ * right then: every slug was known at build time and anything else was a typo.
+ * It is wrong now — a post written in the admin is not in the last build's
+ * params, so `false` would 404 it until somebody deployed. Unknown slugs still
+ * 404, because postBySlug returns null for them and the route calls notFound().
+ */
+export const dynamicParams = true;
+
+/** A post published in the admin should appear without waiting for a rebuild. */
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = postBySlug(slug);
-  if (!post) return {};
+  const found = await postBySlug(slug);
+  if (!found) return {};
+  const post = found.post;
   return {
     title: post.title,
     description: post.excerpt,
@@ -53,12 +67,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = postBySlug(slug);
-  if (!post) notFound();
+  const found = await postBySlug(slug);
+  if (!found) notFound();
+  const { post, body } = found;
+
   return (
     <>
       <BlogPostingJsonLd post={post} />
-      <ArticleBody />
+      {/* One article's body is still a component; everything else renders the
+          stored text. See lib/blog/legacy-bodies.ts for why that split exists
+          and why the set should shrink to nothing. */}
+      {hasLegacyBody(slug) ? (
+        <ArticleBody />
+      ) : (
+        <article className="bk-body">
+          {bodyBlocks(body ?? '').map((b, i) => (
+            b.type === 'h2'
+              ? <h2 key={i}>{b.text}</h2>
+              : <p key={i}>{b.text}</p>
+          ))}
+        </article>
+      )}
       {/* progress bar, mobile contents drawer, share buttons */}
       <ArticleChrome />
     </>
