@@ -96,6 +96,13 @@ export default function AdminNav({ showTeam }: { showTeam: boolean }) {
           </svg>
           <span>Reviews</span>
         </Link>
+        <Link {...link('/admin/content/posts')} href="/admin/content/posts">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+            <path d="M14 4v5h5M8 13h8M8 17h5" />
+          </svg>
+          <span>Posts</span>
+        </Link>
       </div>
 
       <div className={styles.navGroup}>
