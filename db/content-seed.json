@@ -1,0 +1,361 @@
+{
+  "posts": [
+    {
+      "slug": "hiring-offshore-without-losing-quality-control",
+      "title": "The 2026 Guide to Hiring Offshore Talent Without Losing Quality Control",
+      "excerpt": "The playbook for scoping a role, vetting candidates, and keeping quality steady once the work is handed over.",
+      "body": null,
+      "date": "2026-08-06",
+      "readTime": "11 min read",
+      "category": "Hiring Strategy",
+      "image": "/images/blog/hiring-offshore.jpg",
+      "authorName": "Johnathan M.",
+      "authorAvatar": "/images/teams/Johnathan.jpg",
+      "published": true,
+      "sortOrder": 0
+    },
+    {
+      "slug": "role-scorecard-define-a-remote-hire-in-one-page",
+      "title": "The Role Scorecard: Define a Remote Hire in One Page",
+      "excerpt": "A one-page format for turning a vague headcount request into something a recruiter can act on.",
+      "body": null,
+      "date": "2026-08-04",
+      "readTime": "7 min read",
+      "category": "Hiring Strategy",
+      "image": "/images/blog/role-scorecard.jpg",
+      "authorName": "Kalkidan T.",
+      "authorAvatar": "/images/teams/Kalkidan.jpg",
+      "published": false,
+      "sortOrder": 1
+    },
+    {
+      "slug": "when-offshore-hiring-is-the-wrong-call",
+      "title": "When Offshore Hiring Is the Wrong Call",
+      "excerpt": "The cases where an offshore seat costs more than it saves, from the people who staff them.",
+      "body": null,
+      "date": "2026-07-30",
+      "readTime": "6 min read",
+      "category": "Cost & ROI",
+      "image": "/images/blog/cost-roi.jpg",
+      "authorName": "Minassie B.",
+      "authorAvatar": "/images/teams/Minassie.jpg",
+      "published": false,
+      "sortOrder": 2
+    },
+    {
+      "slug": "first-30-days-onboarding-plan",
+      "title": "The First 30 Days: An Onboarding Plan You Can Copy",
+      "excerpt": "A week-by-week ramp plan that gets a new remote seat to independent work inside a month.",
+      "body": null,
+      "date": "2026-07-25",
+      "readTime": "9 min read",
+      "category": "Team Management",
+      "image": "/images/blog/onboarding-30-days.jpg",
+      "authorName": "Yonas B.",
+      "authorAvatar": "/images/teams/Yonas.jpg",
+      "published": false,
+      "sortOrder": 3
+    }
+  ],
+  "reviewSources": [
+    {
+      "source": "trustpilot",
+      "url": "https://www.trustpilot.com/review/remassistance.com",
+      "stars": 5,
+      "ratingLabel": "Excellent",
+      "footnote": "Three reviews were left on Trustpilot; one was removed by the reviewer, so two are currently live.",
+      "sortOrder": 0
+    },
+    {
+      "source": "google",
+      "url": "https://www.google.com/maps?cid=10709335694294039363",
+      "stars": 5,
+      "ratingLabel": "5.0",
+      "footnote": "Google publishes how long ago a review was left rather than the date it was left, so those are Google’s own words. Both were read off the profile on 1 September 2026.",
+      "sortOrder": 1
+    }
+  ],
+  "reviews": [
+    {
+      "source": "trustpilot",
+      "author": "TANO Group",
+      "meta": "US · 1 review",
+      "dateText": "Jun 18, 2025",
+      "headline": "Great Service",
+      "body": "They helped me with a virtual sales team and processed everything together quickly. I would recommend to any business owner that’s looking to grow their company quickly & effectively.",
+      "rating": 5,
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "source": "trustpilot",
+      "author": "ROOFING PROS",
+      "meta": "ET · 1 review",
+      "dateText": "May 27, 2025",
+      "headline": "Nice work",
+      "body": "Its Very Convenient and has ease of access to create a portfolio and apply. really nice job.",
+      "rating": 5,
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "source": "google",
+      "author": "Surafel Dereje",
+      "meta": "9 reviews",
+      "dateText": "7 months ago",
+      "headline": null,
+      "body": "Rem team really helped map our logistics process from beginning to end. They assisted us with all admin tasks and also enhanced our business operations with new tools we’ve never used.",
+      "rating": 5,
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "source": "google",
+      "author": "TANO Group",
+      "meta": "1 review",
+      "dateText": "a year ago",
+      "headline": null,
+      "body": "Rem has helped us focus on growing our company by taking up all the administrative work. 100% reliable and recommend to any business.",
+      "rating": 5,
+      "sortOrder": 1,
+      "published": true
+    }
+  ],
+  "faqGroups": [
+    {
+      "slug": "pricing",
+      "title": "Pricing and terms",
+      "sortOrder": 0
+    },
+    {
+      "slug": "starting",
+      "title": "Getting started",
+      "sortOrder": 1
+    },
+    {
+      "slug": "people",
+      "title": "The agents",
+      "sortOrder": 2
+    },
+    {
+      "slug": "tools-data",
+      "title": "Tools and data",
+      "sortOrder": 3
+    },
+    {
+      "slug": "scope",
+      "title": "Services and scope",
+      "sortOrder": 4
+    },
+    {
+      "slug": "oversight",
+      "title": "Oversight and reporting",
+      "sortOrder": 5
+    }
+  ],
+  "faqItems": [
+    {
+      "groupSlug": "pricing",
+      "question": "Why publish rates when nobody else does?",
+      "answer": "Because the alternative wastes both our time. If $8 or $11 an hour is outside your range you should find that out in two minutes rather than after a discovery call. What genuinely needs a conversation is the shape — how many seats, what coverage, which tier.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "pricing",
+      "question": "Do you have set pricing?",
+      "answer": "Rates start at $8 an hour and the two tiers are real, but the total is assembled from options quoted a la carte. The rate is fixed; the scope is yours to choose.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "pricing",
+      "question": "Is there a free trial?",
+      "answer": "Not a traditional free trial — the training and security setup for your specific processes is substantial work and we would rather be straight about that. Instead there is a 30—60 day pilot: a dedicated team at smaller scale so you can measure our SLAs and quality before a full rollout.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "pricing",
+      "question": "What drives the cost more, coverage or seniority?",
+      "answer": "Coverage, by a long way. Part-time seats are real, and you do not have to buy 160 hours to start. Anything past 40 hours a week means more than one person, which is where a pod beats a single hire — two agents can cover nights and weekends without overtime.",
+      "sortOrder": 3,
+      "published": true
+    },
+    {
+      "groupSlug": "pricing",
+      "question": "Can I change plans once I have signed up?",
+      "answer": "You can add or remove seats at any time and your service rep handles the change. There is no setup fee to re-pay when a pod grows back later.",
+      "sortOrder": 4,
+      "published": true
+    },
+    {
+      "groupSlug": "starting",
+      "question": "What if we have nothing documented?",
+      "answer": "The most common starting point, and it does not block anything — it changes who we send first. We build the process with you during onboarding, write the SOP, and hand it back. That work is included rather than billed as a setup project.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "starting",
+      "question": "How much of our time does onboarding take?",
+      "answer": "Realistically a few hours across two weeks: the consult, a look at the shortlist, tool access, and feedback on the first days of output. The training itself is ours to run.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "starting",
+      "question": "Can we start faster than two weeks?",
+      "answer": "Sometimes. Where your SOPs already exist we can compress onboarding to under a week. Where nothing is written down, rushing it just moves the problem into month one, and we will say so rather than agree to a date we cannot hold.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "starting",
+      "question": "Can we start with a single seat?",
+      "answer": "Yes, and most engagements do. One seat on one process, proven, then grown. We build the process with you first and staff against it.",
+      "sortOrder": 3,
+      "published": true
+    },
+    {
+      "groupSlug": "starting",
+      "question": "Who do we actually talk to day to day?",
+      "answer": "A named supervisor who owns your account, not a shared inbox. They are named during team design, before anything goes live.",
+      "sortOrder": 4,
+      "published": true
+    },
+    {
+      "groupSlug": "people",
+      "question": "Do we have to interview the agents?",
+      "answer": "No, but you always get the option. Some clients interview every candidate, others approve a shortlist, a few leave selection to us. What does not happen is someone being assigned to your account without your sign-off.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "people",
+      "question": "Where are your agents based?",
+      "answer": "Addis Ababa, Ethiopia and Cassino, Italy. Remote, hybrid and in-office setups are available for all agents — useful if your own security posture rules one of them out.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "people",
+      "question": "How do we train the agents we hire?",
+      "answer": "They arrive having cleared several rigorous assessments, so client training starts from a working baseline. Product training is completed before the first piece of live work, not learned on your customers.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "people",
+      "question": "What happens if an agent is not the right fit?",
+      "answer": "You interview and approve before anyone starts, and if it is still not working we replace the seat rather than ask you to manage around it. Replacement is inside the rate.",
+      "sortOrder": 3,
+      "published": true
+    },
+    {
+      "groupSlug": "people",
+      "question": "Can agents learn a technical product?",
+      "answer": "Yes. For accounts that need deeper knowledge we place from a niche track rather than the generalist bench, and we will tell you on the call which one fits.",
+      "sortOrder": 4,
+      "published": true
+    },
+    {
+      "groupSlug": "tools-data",
+      "question": "Do we have to use your software?",
+      "answer": "No. Agents work in whatever you already run and the audit trail stays in your system, so nothing has to be migrated back if the engagement ends. The time-tracking client we can provide is on request only.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "tools-data",
+      "question": "Do the agents work in our helpdesk or yours?",
+      "answer": "Yours — Zendesk, Intercom, GoHighLevel, HubSpot or an in-house tool, using your macros and tags.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "tools-data",
+      "question": "How is our data protected?",
+      "answer": "Under ISO 27001 information security controls, independently audited rather than self-declared, with least-privilege access scoped per client. ISO 9001 covers the quality side.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "tools-data",
+      "question": "Will you have access to move our money?",
+      "answer": "No. On finance engagements we prepare and queue payment runs; releasing them stays with you. Preparer and approver are deliberately separate roles.",
+      "sortOrder": 3,
+      "published": true
+    },
+    {
+      "groupSlug": "tools-data",
+      "question": "What happens to sending domains on outbound work?",
+      "answer": "Infrastructure is warmed and monitored so your primary domain is not put at risk, and everything we build stays with you if the engagement ends.",
+      "sortOrder": 4,
+      "published": true
+    },
+    {
+      "groupSlug": "scope",
+      "question": "Can one person really cover several services?",
+      "answer": "Within reason, and that is usually the point — a part-time seat covering inbox triage, order entry and returns is one person doing three things that were each too small to hire for. What does not work is stretching one seat across functions needing different training, and we will say so rather than sell you the seat.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "scope",
+      "question": "What if the service we need is not listed?",
+      "answer": "Ask. The list covers what we staff routinely, not the limit of what our agents can be trained to do. If it is genuinely outside what we can deliver well we would rather tell you on the call.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "scope",
+      "question": "Do you guarantee a number of meetings, or an outcome?",
+      "answer": "No, and be careful with anyone who does before seeing your offer, list and market. We commit to the process and the reporting, and we report meetings held rather than activity.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "scope",
+      "question": "Do you replace our accountant?",
+      "answer": "No. Finance seats do the bookkeeping and transaction work that has to happen before an accountant or controller can do theirs. The close pack is built to hand straight to them.",
+      "sortOrder": 3,
+      "published": true
+    },
+    {
+      "groupSlug": "scope",
+      "question": "How do we know which service we actually need?",
+      "answer": "Answer five questions and the fit finder names the service line, the tier and a monthly estimate with the arithmetic shown. About two minutes, and it does not ask for an email.",
+      "sortOrder": 4,
+      "published": true
+    },
+    {
+      "groupSlug": "oversight",
+      "question": "What does \"QA-reviewed\" actually mean?",
+      "answer": "Work is scored against criteria you agree, not a generic rubric, by a person who owns the account. You get a daily work report and a weekly quality summary, and the scoring is visible to you rather than averaged into a single number.",
+      "sortOrder": 0,
+      "published": true
+    },
+    {
+      "groupSlug": "oversight",
+      "question": "What reporting do we get?",
+      "answer": "Hourly work logs per seat, a short daily email report covering volume handled and anything stuck, and ongoing QA against your criteria. Oversight is part of the rate, not an upsell.",
+      "sortOrder": 1,
+      "published": true
+    },
+    {
+      "groupSlug": "oversight",
+      "question": "How do you handle nights and weekends without overtime?",
+      "answer": "With a rota rather than a longer day. Extended hours mean two or more seats sharing coverage; true 24/7 means a pod of three to six across timezones.",
+      "sortOrder": 2,
+      "published": true
+    },
+    {
+      "groupSlug": "oversight",
+      "question": "What do we keep if we leave?",
+      "answer": "Any SOP written during onboarding is yours. If you walk away you walk away with your process documented, which is more than you had.",
+      "sortOrder": 3,
+      "published": true
+    }
+  ]
+}

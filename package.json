@@ -17,6 +17,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "node --experimental-strip-types db/seed.ts",
+    "db:seed:content": "node db/seed-content.mjs",
+    "content:extract": "node --experimental-strip-types tools/extract-content.mjs",
     "admin:create": "node --experimental-strip-types tools/create-admin.mts",
     "admin:hash": "node --experimental-strip-types tools/hash-password.mjs"
   },

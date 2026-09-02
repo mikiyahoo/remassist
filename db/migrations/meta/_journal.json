@@ -43,6 +43,13 @@
       "when": 1788294091910,
       "tag": "0005_blue_mongu",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788387562701,
+      "tag": "0006_colossal_rage",
+      "breakpoints": true
     }
   ]
 }
