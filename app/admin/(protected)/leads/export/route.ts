@@ -1,8 +1,8 @@
 import { and, desc } from 'drizzle-orm';
 import { getDb, isDatabaseConfigured } from '@/db';
 import { leads } from '@/db/schema';
-import { auth } from '@/auth';
-import { isAllowedEmail } from '@/lib/auth/allowlist';
+import { currentUser } from '@/lib/auth/require';
+import { canViewLeads } from '@/lib/auth/roles';
 import { csvRow, formatDate } from '@/lib/leads/display';
 import { buildLeadFilters, type LeadSearch } from '@/lib/leads/query';
 
@@ -29,8 +29,8 @@ const HEADERS = [
 ];
 
 export async function GET(req: Request) {
-  const session = await auth();
-  if (!isAllowedEmail(session?.user?.email)) {
+  const user = await currentUser();
+  if (!user || !canViewLeads(user.role)) {
     /* 404, not 403: an authenticated-only URL that answers 403 confirms it
        exists and is worth attacking. */
     return new Response('Not found', { status: 404 });

@@ -12,7 +12,22 @@ import { redirects as legacyRedirects } from './lib/redirects';
  */
 const onVercel = Boolean(process.env.VERCEL);
 
+/**
+ * Build directory. Defaults to .next everywhere, so nothing about a build or a
+ * deploy changes.
+ *
+ * The override exists because two `next dev` servers in one checkout share
+ * .next and corrupt each other: both rewrite _buildManifest.js.tmp on every
+ * compile, and the loser of the race serves a 500 for every route — including
+ * static pages neither process touched. That is not hypothetical here; it is
+ * what happens whenever a second agent or a second terminal runs the dev
+ * server in this repo. Setting NEXT_DIST_DIR gives the second one its own
+ * output tree. See tools/dev-isolated.mjs.
+ */
+const distDir = process.env.NEXT_DIST_DIR || '.next';
+
 const config: NextConfig = {
+  distDir,
   // systemd runs .next/standalone/server.js on the VPS. On Vercel this is
   // redundant work that its own output supersedes.
   ...(onVercel ? {} : { output: 'standalone' as const }),

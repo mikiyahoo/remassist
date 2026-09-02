@@ -20,6 +20,8 @@ const eslintConfig = [
       'tools/**',
       'uploads/**',
       '.next/',
+      /* Build output from tools/dev-isolated.mjs — same reason as .next/. */
+      '.next-dev*/',
       'next-env.d.ts',
       'package-lock.json',
       /* Static UI prototype for the admin, plus (unhelpfully) a checked-in
@@ -28,6 +30,26 @@ const eslintConfig = [
          500+ warnings from third-party JavaScript. */
       'Test Admin/**',
     ],
+  },
+  {
+    /* A leading underscore marks a parameter that is deliberately ignored.
+       lib/auth/roles.ts's canDelete takes a Role it never reads, so that the
+       one place the "nobody deletes" rule lives keeps the same shape as every
+       predicate beside it and stays the obvious function to change when a
+       delete feature does arrive. Renaming it to satisfy the linter would hide
+       that intent; switching the rule off entirely would lose the real unused
+       variables it catches. Still 'warn', and lint runs --max-warnings=0, so a
+       genuinely unused name without the underscore still fails. */
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   {
     // Header/footer were ported verbatim from partials/*.html and use plain

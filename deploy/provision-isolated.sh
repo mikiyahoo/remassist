@@ -106,6 +106,19 @@ NEXT_PUBLIC_CONSENT_MODE=opt-in
 NEXT_PUBLIC_GTM_ID=
 # Unset = lead notifications are skipped silently (lib/notify.ts).
 LEAD_WEBHOOK_URL=
+
+# ── Admin sign-in (Auth.js) ────────────────────────────────────────────────
+# Without AUTH_SECRET the admin is unreachable rather than unprotected, which
+# is the right way round to fail. Generate with: openssl rand -base64 32
+AUTH_SECRET=
+AUTH_URL=$SITE_URL
+
+# Resend sends the sign-in link and code. The sending domain MUST be a
+# subdomain (auth.<domain>) verified in Resend — never the apex, whose MX/SPF/
+# DKIM belong to Microsoft 365 and will break mail flow if touched.
+# Unset = nobody can sign in to /admin.
+AUTH_RESEND_KEY=
+AUTH_EMAIL_FROM=Rem Assist <signin@auth.remconnect.io>
 ENV
   chown "$APP_USER:$APP_USER" "$SHARED/.env"
   chmod 640 "$SHARED/.env"     # 0640, not 0600: remote-deploy.sh ($ADMIN_USER) must read it

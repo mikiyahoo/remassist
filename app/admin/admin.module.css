@@ -20,6 +20,10 @@
   --ink-700: #344054;
   --ink-500: #667180;
   --hairline: #edf0f6;
+  /* --hairline is a divider between things that are already distinct; a form
+     control has to hold its own edge against white, which needs more contrast
+     than a 1px #edf0f6 line can give it. */
+  --line-strong: #d5dced;
   --fg-on-dark: #f4f6fb;
   --fg-on-dark-muted: #a6a8bd;
   --r-sm: 14px;
@@ -468,43 +472,89 @@
 .statusForm { display: flex; gap: 10px; align-items: center; padding: 16px 22px; flex-wrap: wrap; }
 
 /* ---------- sign-in ---------- */
-.signinWrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.signinWrap {
+  min-height: 100vh;
+  /* dvh so the card is not pushed under a phone's collapsing browser bar. */
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+  /* One card on an otherwise empty page: a soft brand wash behind it gives the
+     eye somewhere to land and stops the card reading as a stray panel. */
+  background:
+    radial-gradient(58rem 30rem at 50% -6rem, rgba(81, 141, 224, 0.16), transparent 70%),
+    #f5f7fa;
+}
 .signinCard {
   width: 100%;
-  max-width: 25rem;
+  max-width: 25.5rem;
   background: #fff;
+  border: 1px solid var(--hairline);
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
-  padding: 32px;
+  padding: 36px 32px 30px;
 }
-.signinLogo { height: 30px; width: auto; display: block; margin-bottom: 20px; }
-.signinTitle { font-size: 19px; font-weight: 700; margin: 0 0 6px; }
-.signinLede { color: var(--ink-500); font-size: 14px; line-height: 1.6; margin: 0 0 20px; }
-.signinForm { display: flex; flex-direction: column; gap: 10px; }
+.signinLogo { height: 44px; width: auto; display: block; margin-bottom: 24px; }
+.signinTitle { font-size: 23px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 8px; }
+.signinLede { color: var(--ink-500); font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
+.signinForm { display: flex; flex-direction: column; gap: 16px; }
+/* A label and its control are one unit, so they get the tighter gap; the form's
+   own 16px gap then separates units instead of spacing everything alike. */
+.signinField { display: flex; flex-direction: column; gap: 6px; }
+.signinLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-700);
+}
 .signinInput {
   font: inherit;
   font-size: 15px;
-  height: 44px;
+  width: 100%;
+  height: 46px;
   padding: 0 14px;
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--line-strong);
   border-radius: var(--r-sm);
   background: #fff;
   color: var(--ink-900);
+  transition: border-color 150ms, box-shadow 150ms;
 }
-.signinInput:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 1px; }
+.signinInput::placeholder { color: #98a2b3; }
+.signinInput:hover { border-color: #bcc7dd; }
+.signinInput:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(81, 141, 224, 0.2);
+}
+.signinInput:invalid:not(:placeholder-shown):not(:focus) { border-color: #e5a6a0; }
 .signinBtn {
   font: inherit;
   font-size: 15px;
   font-weight: 600;
-  height: 44px;
+  height: 46px;
+  margin-top: 2px;
   border: 0;
   border-radius: var(--r-sm);
   background: var(--brand-blue);
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 6px 16px rgba(50, 109, 218, 0.22);
+  transition: background 150ms, box-shadow 150ms, transform 80ms;
 }
 .signinBtn:hover { background: var(--blue-700); }
-.signinMsg { margin: 0 0 16px; padding: 12px 14px; border-radius: var(--r-sm); font-size: 13.5px; line-height: 1.55; }
+.signinBtn:active { transform: translateY(1px); box-shadow: 0 3px 9px rgba(50, 109, 218, 0.2); }
+.signinBtn:focus-visible { outline: 2px solid var(--blue-700); outline-offset: 2px; }
+.signinMsg {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  line-height: 1.55;
+  /* The accent stripe carries the same "something went wrong" signal as the
+     tint does, for anyone who cannot separate the two backgrounds by colour. */
+  border-left: 3px solid currentColor;
+}
 .msgOk { background: #ecfaf1; color: #0f5c2d; }
 .msgErr { background: #fef3f2; color: #8a1a12; }
 
@@ -549,4 +599,185 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .navLink, .btn, .table tbody tr { transition: none; }
+}
+
+/* ---------- sign-in: remember checkbox, code entry ---------- */
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -2px 0 0;
+  font-size: 14px;
+  color: var(--ink-700);
+  cursor: pointer;
+  user-select: none;
+}
+.checkRow input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--brand-blue);
+  cursor: pointer;
+  flex: none;
+}
+.checkRow input:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+.signinMsgLink {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+/* Mono and widely tracked: six digits are read one at a time and compared
+   against an email in another window, which proportional type makes harder. */
+.codeInput {
+  font-family: var(--admin-mono);
+  font-size: 24px;
+  font-weight: 600;
+  height: 56px;
+  /* The trailing letter-spacing is added after the last glyph too, so the run
+     sits off-centre unless the same amount is given back on the left. */
+  letter-spacing: 8px;
+  text-indent: 8px;
+  text-align: center;
+  padding: 0 8px;
+}
+.codeInput::placeholder {
+  letter-spacing: 8px;
+  font-weight: 400;
+  color: #cbd3e0;
+}
+.signinFoot {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-500);
+}
+.signinFoot a { color: var(--blue-700); text-decoration: none; font-weight: 600; }
+.signinFoot a:hover { text-decoration: underline; }
+.signinFoot a:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; border-radius: 4px; }
+
+@media (max-width: 480px) {
+  .signinWrap { padding: 24px 16px; }
+  .signinCard { padding: 28px 22px 24px; border-radius: var(--r-sm); }
+  .signinLogo { height: 38px; margin-bottom: 20px; }
+  .signinTitle { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .signinInput, .signinBtn { transition: none; }
+  .signinBtn:active { transform: none; }
+}
+
+/* Secondary action on the sign-in card — the emailed-code path. Visually
+   subordinate to the password button without being hard to find. */
+.signinAlt {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  height: 40px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: #fff;
+  color: var(--ink-700);
+  cursor: pointer;
+}
+.signinAlt:hover { border-color: var(--brand-blue); color: var(--blue-700); }
+.whoRole {
+  display: inline-block;
+  margin: 0 12px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 246, 251, 0.2);
+  color: var(--fg-on-dark-muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+/**
+ * Hidden in the collapsed rail, for the same reason .who is.
+ *
+ * The rule lives here rather than in the 1180px block above with its siblings,
+ * and that placement is load-bearing: .whoRole is declared AFTER that block, so
+ * a `display: none` up there loses to this rule's `display: inline-block` on
+ * source order alone — both are single-class selectors, so specificity does not
+ * break the tie. Keeping the override adjacent to the declaration it overrides
+ * is the version that cannot silently stop working when the file is reordered.
+ *
+ * Without it the pill gets a 32px flex track in a 76px sidebar and wraps to one
+ * letter per line, rendering the role as a vertical strip of characters.
+ */
+@media (max-width: 1180px) {
+  .whoRole { display: none; }
+}
+
+/* ---------- settings, team and the verification banner ---------- */
+
+/* A plain vertical form inside a panel. The panel supplies the card, so this
+   only has to supply the rhythm and the padding the panel's own head/foot
+   already establish. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 22px;
+  max-width: 26rem;
+}
+
+/* One field and its button on a line, dropping to two lines on a phone. The
+   button aligns to the bottom because the field above it carries a label. */
+.inviteRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 20px 22px;
+  flex-wrap: wrap;
+}
+.grow { flex: 1 1 18rem; }
+
+/* Role and status pills. Deliberately not colour alone: each reads as a word,
+   so the state survives a monochrome screen and a colour-blind reader. */
+.rolePill {
+  background: #eef4fd;
+  color: var(--blue-700);
+  text-transform: capitalize;
+}
+.pillOn { background: #ecfaf1; color: #0f5c2d; }
+.pillOff { background: #fef3f2; color: #8a1a12; }
+.pillWait { background: #fef6e7; color: #a35307; }
+
+/**
+ * The unverified-email banner.
+ *
+ * Sits above the page's own sticky topbar, so it scrolls away instead of
+ * permanently taking a strip of a screen it never actually blocks.
+ */
+.verifyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 28px;
+  background: #fff8ec;
+  border-bottom: 1px solid #f5e3c3;
+  color: var(--ink-700);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.verifyBanner strong { display: block; color: var(--ink-900); font-size: 14px; }
+.verifyBanner span { display: block; max-width: 62ch; }
+
+/* After a day. A heavier tint and a left rule rather than a colour swap, so it
+   reads as "more urgent" and not as "a different kind of message". */
+.verifyLoud {
+  background: #fdece9;
+  border-bottom-color: #f3c9c2;
+  border-left: 4px solid #b42318;
+}
+.verifyLoud strong { color: #8a1a12; }
+
+@media (max-width: 720px) {
+  .verifyBanner { padding: 12px 18px; }
+  .stack, .inviteRow { padding: 16px 18px; }
 }

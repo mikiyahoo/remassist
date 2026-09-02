@@ -57,6 +57,10 @@ fi
 EXCLUDES=(
   --exclude=./node_modules
   --exclude=./.next
+  # Build output from tools/dev-isolated.mjs. A separate pattern because tar
+  # matches these literally: --exclude=./.next does NOT cover ./.next-dev,
+  # so without it ~70 MB of local dev output ships on every deploy.
+  --exclude=./.next-dev*
   --exclude=./.git
   --exclude=./.playwright-mcp
   --exclude=./.claude

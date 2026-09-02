@@ -1,0 +1,50 @@
+/**
+ * What each role may do — MIGRATION-PLAN §10.
+ *
+ * Pure and free of next-auth and next/headers imports, matching the convention
+ * of allowlist.ts: these are the rules the whole admin is gated on, so they are
+ * worth testing directly rather than inferring from a redirect.
+ *
+ * The system holds exactly one admin, enforced by a partial unique index on the
+ * users table. Everyone else is a manager, invited by that admin.
+ */
+
+export const ROLES = ['admin', 'manager'] as const;
+export type Role = (typeof ROLES)[number];
+
+export function isRole(v: unknown): v is Role {
+  return typeof v === 'string' && (ROLES as readonly string[]).includes(v);
+}
+
+/** Only the admin may invite, and only ever as a manager. */
+export function canInvite(role: Role): boolean {
+  return role === 'admin';
+}
+
+/** Viewing the team, inviting, disabling and re-enabling. Admin only. */
+export function canManageUsers(role: Role): boolean {
+  return role === 'admin';
+}
+
+/**
+ * Nobody deletes anything, including the admin.
+ *
+ * A constant on purpose. Access is revoked by setting disabledAt, which keeps
+ * the audit trail of who was invited by whom; deleting a row destroys it. When
+ * a delete feature is genuinely wanted there is one function to change here,
+ * rather than a scattering of checks that were never written in the first
+ * place because nothing could delete when the code was reviewed.
+ */
+export function canDelete(_role: Role): boolean {
+  return false;
+}
+
+/** Both roles work the pipeline — that is what a manager is for. */
+export function canEditLeads(role: Role): boolean {
+  return role === 'admin' || role === 'manager';
+}
+
+/** Both roles may read leads and export them. */
+export function canViewLeads(role: Role): boolean {
+  return role === 'admin' || role === 'manager';
+}

@@ -158,6 +158,23 @@ for _ in $(seq 1 30); do
   sleep 1
 done
 
+# The admin sign-in page, checked separately and only once the app is up.
+#
+# `/` renders fine with a broken admin: it touches no session and no Auth.js
+# config. So a missing or empty AUTH_SECRET made Auth.js refuse to initialise,
+# /admin answered 500, and this script still reported a successful deploy — the
+# worst kind of green. AUTH_SECRET is written empty by provision.sh and has to
+# be filled in by hand, so this is the likely failure, not a hypothetical one.
+#
+# A public page by design (signed-out visitors must reach it), so a 200 here
+# discloses nothing that a browser could not already see.
+if [ "$ok" = 1 ]; then
+  if ! curl -fsS -o /dev/null -m 5 "${HEALTH_URL%/}/admin/signin"; then
+    warn "/ is up but /admin/signin is not — check AUTH_SECRET in shared/.env"
+    ok=0
+  fi
+fi
+
 if [ "$ok" != 1 ]; then
   if [ -n "$PREVIOUS" ]; then
     warn "smoke test failed — rolling back to $PREVIOUS"

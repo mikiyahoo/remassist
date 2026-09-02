@@ -1,5 +1,5 @@
 import {
-  pgTable, text, timestamp, primaryKey, integer,
+  pgTable, pgEnum, text, timestamp, primaryKey, integer, uuid, index,
 } from 'drizzle-orm/pg-core';
 
 /**
@@ -15,12 +15,34 @@ import {
  * public accounts and no password column — there are no passwords.
  */
 
+/**
+ * Exactly two roles, and exactly one admin — the latter enforced by a partial
+ * unique index in migration 0004, not by application logic that can be raced.
+ */
+export const userRole = pgEnum('user_role', ['admin', 'manager']);
+
 export const users = pgTable('users', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: timestamp('email_verified', { withTimezone: true }),
   image: text('image'),
+  /* Default to the lesser privilege. A row that somehow arrives without an
+     explicit role should be a manager, never an admin. */
+  role: userRole('role').notNull().default('manager'),
+  /* Null until an invited manager finishes registering, and for any account
+     that only ever signs in with an emailed code. */
+  passwordHash: text('password_hash'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  /* Who let this person in. Nullable because the first admin is created by the
+     CLI and nobody invited them. */
+  invitedBy: text('invited_by'),
+  /**
+   * Access is revoked by setting this, never by deleting the row: a delete
+   * destroys the record of who invited whom, and nothing in this system is
+   * permitted to delete. See canDelete in lib/auth/roles.ts.
+   */
+  disabledAt: timestamp('disabled_at', { withTimezone: true }),
 });
 
 /**
@@ -57,4 +79,68 @@ export const verificationTokens = pgTable('verification_tokens', {
   expires: timestamp('expires', { withTimezone: true }).notNull(),
 }, (t) => [
   primaryKey({ columns: [t.identifier, t.token] }),
+]);
+
+/**
+ * Failed sign-in redemptions, for brute-force lockout.
+ *
+ * Auth.js has no rate limiting on token redemption at all — single-use is
+ * enforced only because the adapter deletes the row on redeem. That is fine for
+ * a 32-byte token; it is not fine for the 6-digit code we now issue, where the
+ * whole keyspace is a million guesses against an endpoint that answers as fast
+ * as it is asked. This table is what makes the code safe to offer.
+ *
+ * A row per failure rather than a mutable counter: no read-modify-write race
+ * between concurrent attempts, and the rows double as a record of who was being
+ * targeted. Pruned on write, so it cannot grow without bound.
+ */
+export const signinAttempts = pgTable('signin_attempts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  /** The email, already normalised by Auth.js before it reaches the adapter. */
+  identifier: text('identifier').notNull(),
+  failedAt: timestamp('failed_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('signin_attempts_lookup_idx').on(t.identifier, t.failedAt),
+]);
+
+/**
+ * Pending manager invitations — MIGRATION-PLAN §10.
+ *
+ * Separate from Auth.js's verification_tokens, which has nowhere to put a role,
+ * an inviter, or acceptance state.
+ *
+ * The token is stored HASHED. An invitation token is a credential that creates
+ * an account, so a leaked database dump must not be a stack of usable
+ * invitations — the same reasoning Auth.js applies to its own tokens.
+ */
+export const invitations = pgTable('invitations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: text('email').notNull(),
+  tokenHash: text('token_hash').notNull(),
+  role: userRole('role').notNull().default('manager'),
+  invitedBy: text('invited_by').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  /* Set when redeemed. Kept rather than deleted so the team screen can show
+     that an invitation was accepted and when. */
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+
+  /**
+   * The second factor, issued when someone opens the invitation link.
+   *
+   * The link alone is not enough to become an account: a corporate mail
+   * scanner that prefetches URLs, or a forwarded message, would otherwise be a
+   * registration. Opening the link mails a 6-digit code to the same address,
+   * and both are required to finish. Null until the link is first opened.
+   *
+   * Hashed with scrypt rather than SHA-256 — unlike the 256-bit token above,
+   * six digits is a keyspace of one million, which a fast hash makes trivial
+   * to reverse from a database dump. Redemption reads the row by id and
+   * verifies, so a salted hash costs nothing here.
+   */
+  codeHash: text('code_hash'),
+  codeExpiresAt: timestamp('code_expires_at', { withTimezone: true }),
+}, (t) => [
+  index('invitations_token_idx').on(t.tokenHash),
+  index('invitations_email_idx').on(t.email),
 ]);

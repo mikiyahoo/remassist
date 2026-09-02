@@ -22,6 +22,27 @@
       "when": 1788282397285,
       "tag": "0002_normal_sebastian_shaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788286464671,
+      "tag": "0003_spotty_the_santerians",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788292437498,
+      "tag": "0004_calm_harrier",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788294091910,
+      "tag": "0005_blue_mongu",
+      "breakpoints": true
     }
   ]
 }

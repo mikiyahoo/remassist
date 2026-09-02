@@ -1,7 +1,10 @@
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { auth, signOut } from '@/auth';
-import { isAllowedEmail } from '@/lib/auth/allowlist';
+import { cookies } from 'next/headers';
+import { signOut } from '@/auth';
+import { requireUser } from '@/lib/auth/require';
+import { canManageUsers } from '@/lib/auth/roles';
+import { REMEMBER_COOKIE } from '@/lib/auth/remember';
+import AdminNav from './AdminNav';
+import VerifyBanner from './VerifyBanner';
 import styles from '../admin.module.css';
 
 /**
@@ -14,18 +17,19 @@ import styles from '../admin.module.css';
  * leads/export/route.ts — a CSV of every lead is exactly the thing that must
  * not be reachable because someone assumed a parent layout was protecting it.
  *
- * Sidebar and topbar follow the "Test Admin" prototype. Only Leads is built;
- * the other sections in that prototype are later phases and are deliberately
- * absent rather than present-and-dead.
+ * Sidebar and topbar follow the "Test Admin" prototype. Leads, Settings and
+ * Team are built; the remaining sections in that prototype are later phases and
+ * are deliberately absent rather than present-and-dead.
  */
 
 /* Session-dependent: prerendering would bake one person's view into HTML. */
 export const dynamic = 'force-dynamic';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!isAllowedEmail(email)) redirect('/admin/signin');
+  /* Loads the user row, so a disabled account loses access on its next
+     request rather than at its next sign-in. */
+  const user = await requireUser();
+  const email = user.email;
 
   return (
     <>
@@ -36,24 +40,18 @@ export default async function ProtectedLayout({ children }: { children: React.Re
           <span className={styles.brandLabel}>Admin</span>
         </div>
 
-        <nav className={styles.navScroll} aria-label="Admin sections">
-          <div className={styles.navGroup}>
-            <div className={styles.navGroupTitle}>Pipeline</div>
-            <Link className={`${styles.navLink} ${styles.active}`} href="/admin/leads">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 12h5l2 3h4l2-3h5" />
-                <path d="M4 5h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
-              </svg>
-              <span>Leads</span>
-            </Link>
-          </div>
-        </nav>
+        <AdminNav showTeam={canManageUsers(user.role)} />
 
         <div className={styles.sidebarFoot}>
           <span className={styles.who}>{email}</span>
+          <span className={styles.whoRole}>{user.role}</span>
           <form
             action={async () => {
               'use server';
+              /* Clear the remember flag too. Left behind, it would silently
+                 give the next person to sign in on this browser a 30-day
+                 session they never asked for. */
+              (await cookies()).delete(REMEMBER_COOKIE);
               await signOut({ redirectTo: '/admin/signin' });
             }}
           >
@@ -62,7 +60,12 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         </div>
       </aside>
 
-      <div className={styles.main}>{children}</div>
+      <div className={styles.main}>
+        {/* Above the page's own sticky topbar, so it scrolls away rather than
+            permanently eating a strip of a screen it never blocks. */}
+        <VerifyBanner user={user} />
+        {children}
+      </div>
     </>
   );
 }

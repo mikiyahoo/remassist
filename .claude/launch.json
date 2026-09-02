@@ -31,6 +31,15 @@
         "3400"
       ],
       "port": 3400
+    },
+    {
+      "name": "rem-assist-dev-isolated",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/dev-isolated.mjs",
+        "3210"
+      ],
+      "port": 3210
     }
   ]
 }
