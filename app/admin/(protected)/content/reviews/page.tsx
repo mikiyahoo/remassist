@@ -91,8 +91,8 @@ export default async function ReviewsEditorPage({
           that does not match its source is a fabricated testimonial. Take one down by
           unpublishing it; nothing here deletes.
           <br />
-          The public <code>/reviews</code> page still renders from{' '}
-          <code>app/reviews/page.tsx</code> until the cutover, so these edits are not live yet.
+          <code>/reviews</code> reads from the database, and saving revalidates it, so a
+          correction is visible to visitors straight away.
         </div>
 
         {sources.map((s) => {
