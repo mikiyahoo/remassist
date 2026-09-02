@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  ROLES, canDelete, canEditLeads, canInvite, canManageUsers, canViewLeads, isRole,
+  ROLES, canDelete, canEditContent, canEditLeads, canInvite, canManageUsers,
+  canUnpublishContent, canViewLeads, isRole,
 } from './roles';
 
 describe('isRole', () => {
@@ -49,5 +50,24 @@ describe('canDelete', () => {
     // Access is revoked by disabling, never by deleting — a deleted row loses
     // the record of who invited whom.
     for (const role of ROLES) expect(canDelete(role), role).toBe(false);
+  });
+});
+
+describe('content capabilities', () => {
+  it('lets both roles edit content', () => {
+    // A manager who cannot fix a typo in the FAQ is no use for the job the CMS
+    // exists to do, and a wrong word is visible and reversible in a way a
+    // wrong role grant is not.
+    for (const role of ROLES) expect(canEditContent(role), role).toBe(true);
+  });
+
+  it('lets both roles unpublish, and still lets nobody delete', () => {
+    // Content is taken off the site by unpublishing, never by deleting — the
+    // same rule as accounts, one level down. A deleted answer destroys the
+    // record of what the site once claimed.
+    for (const role of ROLES) {
+      expect(canUnpublishContent(role), role).toBe(true);
+      expect(canDelete(role), role).toBe(false);
+    }
   });
 });

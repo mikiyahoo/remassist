@@ -81,6 +81,18 @@ export default function AdminNav({ showTeam }: { showTeam: boolean }) {
       </div>
 
       <div className={styles.navGroup}>
+        <div className={styles.navGroupTitle}>Content</div>
+        <Link {...link('/admin/content/faq')} href="/admin/content/faq">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7" />
+            <path d="M12 17h.01" />
+          </svg>
+          <span>FAQ</span>
+        </Link>
+      </div>
+
+      <div className={styles.navGroup}>
         <div className={styles.navGroupTitle}>Account</div>
         <Link {...link('/admin/settings', true)} href="/admin/settings">
           <svg viewBox="0 0 24 24" aria-hidden="true">

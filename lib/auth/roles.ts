@@ -48,3 +48,30 @@ export function canEditLeads(role: Role): boolean {
 export function canViewLeads(role: Role): boolean {
   return role === 'admin' || role === 'manager';
 }
+
+/**
+ * Both roles may edit site content.
+ *
+ * A manager who cannot fix a typo in the FAQ is no use for the job the CMS
+ * exists to do, and content carries none of the risk that invitations and role
+ * changes do — a wrong word is visible and reversible, a wrong grant is
+ * neither. The narrow remit in the plan was about access, not copy.
+ */
+export function canEditContent(role: Role): boolean {
+  return role === 'admin' || role === 'manager';
+}
+
+/**
+ * Content is unpublished, never deleted — the same rule as accounts, for the
+ * same reason, one level down.
+ *
+ * canDelete above refuses for everyone because a deleted user row destroys the
+ * record of who invited whom. A deleted review or FAQ answer destroys the
+ * record of what the site once claimed, which matters just as much the first
+ * time somebody asks why a published rate changed. Every content table carries
+ * a `published` flag, so there is always a way to take something off the site
+ * without losing what it said.
+ */
+export function canUnpublishContent(role: Role): boolean {
+  return canEditContent(role);
+}
