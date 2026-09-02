@@ -125,31 +125,49 @@
     {
       "slug": "pricing",
       "title": "Pricing and terms",
+      "blurb": "What a seat costs, what moves the number, and what is quoted separately.",
+      "linkHref": "/pricing",
+      "linkLabel": "Pricing page →",
       "sortOrder": 0
     },
     {
       "slug": "starting",
       "title": "Getting started",
+      "blurb": "What the two weeks actually involve, and how much of your time it takes.",
+      "linkHref": "/how-it-works",
+      "linkLabel": "How it Works page →",
       "sortOrder": 1
     },
     {
       "slug": "people",
       "title": "The agents",
+      "blurb": "Who they are, how they are trained, and what happens when one is not right.",
+      "linkHref": "/services/virtual-back-office-team",
+      "linkLabel": "Virtual Back Office Team page →",
       "sortOrder": 2
     },
     {
       "slug": "tools-data",
       "title": "Tools and data",
+      "blurb": "Whose systems the work happens in, and how access is controlled.",
+      "linkHref": "/services/customer-service-agents",
+      "linkLabel": "Customer Service page →",
       "sortOrder": 3
     },
     {
       "slug": "scope",
       "title": "Services and scope",
+      "blurb": "What one seat can realistically cover, and what we will turn down.",
+      "linkHref": "/services",
+      "linkLabel": "All services page →",
       "sortOrder": 4
     },
     {
       "slug": "oversight",
       "title": "Oversight and reporting",
+      "blurb": "What arrives without you chasing anyone for it.",
+      "linkHref": "/how-it-works",
+      "linkLabel": "How it Works page →",
       "sortOrder": 5
     }
   ],

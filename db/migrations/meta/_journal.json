@@ -50,6 +50,13 @@
       "when": 1788387562701,
       "tag": "0006_colossal_rage",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788390114545,
+      "tag": "0007_far_wendigo",
+      "breakpoints": true
     }
   ]
 }

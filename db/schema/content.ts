@@ -115,6 +115,15 @@ export const faqGroups = pgTable('faq_groups', {
   /** The anchor the jump nav links to, so these must keep their current values. */
   slug: text('slug').notNull().unique(),
   title: text('title').notNull(),
+  /** The line under the heading. Every group has one. */
+  blurb: text('blurb'),
+  /**
+   * The "Pricing page →" link beside each heading. Two columns rather than one
+   * stored anchor: the label is content an editor may reword, the href is a
+   * route that has to stay valid, and conflating them means validating markup.
+   */
+  linkHref: text('link_href'),
+  linkLabel: text('link_label'),
   sortOrder: integer('sort_order').notNull().default(0),
 });
 

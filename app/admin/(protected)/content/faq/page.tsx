@@ -83,10 +83,10 @@ export default async function FaqEditorPage({
         )}
 
         <div className={`${styles.notice} ${styles.section}`}>
-          <strong>The public page still reads from source</strong>
-          Editing here changes the database. <code>/faq</code> renders from{' '}
-          <code>app/faq/page.tsx</code> until the cutover, so these edits are not live yet.
-          That is deliberate — the content was imported and verified first.
+          <strong>These edits are live</strong>
+          <code>/faq</code> reads from the database, and saving here revalidates that page,
+          so a change is visible to visitors straight away. Unpublishing takes a question off
+          the page and keeps its wording.
         </div>
 
         {groups.map((g) => {

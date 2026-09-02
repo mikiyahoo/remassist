@@ -93,11 +93,11 @@ try {
   const groupIdBySlug = new Map();
   for (const g of seed.faqGroups) {
     const { rows } = await c.query(
-      `insert into faq_groups (slug, title, sort_order)
-       values ($1,$2,$3)
+      `insert into faq_groups (slug, title, blurb, link_href, link_label, sort_order)
+       values ($1,$2,$3,$4,$5,$6)
        on conflict (slug) do nothing
        returning id`,
-      [g.slug, g.title, g.sortOrder],
+      [g.slug, g.title, g.blurb ?? null, g.linkHref ?? null, g.linkLabel ?? null, g.sortOrder],
     );
     if (rows.length) {
       groupIdBySlug.set(g.slug, rows[0].id);
@@ -105,6 +105,19 @@ try {
     } else {
       const existing = await c.query('select id from faq_groups where slug = $1', [g.slug]);
       groupIdBySlug.set(g.slug, existing.rows[0].id);
+      /* Fill columns that did not exist when this row was first seeded, and
+         ONLY where they are still null. That is not the update this script
+         refuses to do: it cannot overwrite anything an editor typed, because a
+         value they typed is not null. Without it, adding a column would leave
+         every existing row permanently blank. */
+      await c.query(
+        `update faq_groups
+            set blurb      = coalesce(blurb, $2),
+                link_href  = coalesce(link_href, $3),
+                link_label = coalesce(link_label, $4)
+          where id = $1`,
+        [existing.rows[0].id, g.blurb ?? null, g.linkHref ?? null, g.linkLabel ?? null],
+      );
       bump(skipped, 'faq_groups');
     }
   }

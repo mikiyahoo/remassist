@@ -123,7 +123,21 @@ for (let i = 0; i < sections.length; i += 2) {
   const title = /<h2 className=\{styles\['rs-h2'\]\}>([^<]+)<\/h2>/.exec(chunk)?.[1];
   if (!title) throw new Error(`no title for faq group ${slug}`);
 
-  faqGroups.push({ slug, title, sortOrder: faqGroups.length });
+  /* The line under the heading, and the "Pricing page →" link beside it. Both
+     are content the page renders today, so a cutover that dropped them would
+     lose visible copy while every count still matched. */
+  const head = /<div className=\{styles\['rs-group-head'\]\}>([\s\S]*?)<\/div>\s*<\/div>/.exec(chunk)?.[1] ?? chunk;
+  const blurb = /<p>([\s\S]*?)<\/p>/.exec(head)?.[1]?.trim() ?? null;
+  const link = /<a className=\{styles\['rs-source'\]\} href='([^']+)'>([^<]+)<\/a>/.exec(chunk);
+
+  faqGroups.push({
+    slug,
+    title,
+    blurb,
+    linkHref: link?.[1] ?? null,
+    linkLabel: link?.[2]?.trim() ?? null,
+    sortOrder: faqGroups.length,
+  });
 
   const pairs = [...chunk.matchAll(
     /<summary>([\s\S]*?)<\/summary>\s*<p>([\s\S]*?)<\/p>/g,
@@ -155,6 +169,7 @@ console.log(`  faq items      ${faqItems.length}`);
 const holes = [
   ...reviews.filter((r) => !r.author || !r.meta || !r.dateText || !r.body).map((r) => `review ${r.author}`),
   ...faqItems.filter((f) => !f.question || !f.answer).map((f) => `faq ${f.question}`),
+  ...faqGroups.filter((g) => !g.blurb || !g.linkHref || !g.linkLabel).map((g) => `faq group ${g.slug} (blurb or link)`),
   ...posts.filter((p) => !p.slug || !p.title || !p.excerpt).map((p) => `post ${p.slug}`),
 ];
 if (holes.length) {
