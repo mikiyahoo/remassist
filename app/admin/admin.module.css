@@ -781,3 +781,58 @@
   .verifyBanner { padding: 12px 18px; }
   .stack, .inviteRow { padding: 16px 18px; }
 }
+
+/* ---------- dashboard ---------- */
+
+/* Auto-fit rather than a fixed column count: the tiles stay readable from a
+   phone to a wide monitor without a breakpoint per size. */
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 18px 20px;
+  background: #fff;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  border-left: 3px solid transparent;
+  transition: border-color 150ms, transform 150ms;
+}
+/* Every tile is a link into the screen that can act on the number, so it has to
+   read as clickable rather than as decoration. */
+.stat:hover { border-left-color: var(--brand-blue); transform: translateY(-1px); }
+.stat:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+.statNum { font-size: 30px; font-weight: 700; line-height: 1.1; color: var(--ink-900); }
+.statLabel { font-size: 13px; color: var(--ink-500); }
+.statNote { font-size: 11.5px; color: #a35307; margin-top: 4px; }
+/* Reserved for a count that means somebody is waiting on a reply. */
+.statWarn { border-left-color: #d97706; }
+.statWarn .statNum { color: #a35307; }
+
+/* Pipeline share. A bar because the shape is the point — 3 against 30 does not
+   read as a difference in a column of digits. */
+.bar {
+  display: inline-block;
+  vertical-align: middle;
+  width: min(240px, 40vw);
+  height: 8px;
+  border-radius: 999px;
+  background: #eef1f7;
+  overflow: hidden;
+}
+.barFill { display: block; height: 100%; background: var(--brand-blue); border-radius: 999px; }
+.barPct { margin-left: 10px; font-size: 12px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
+
+/* The selected filter pill on the fit finder screen. */
+.pagerLinkOn {
+  background: var(--brand-blue);
+  color: #fff;
+  border-color: var(--brand-blue);
+}

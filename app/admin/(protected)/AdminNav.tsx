@@ -39,6 +39,21 @@ export default function AdminNav({ showTeam }: { showTeam: boolean }) {
   return (
     <nav className={styles.navScroll} aria-label="Admin sections">
       <div className={styles.navGroup}>
+        <div className={styles.navGroupTitle}>Overview</div>
+        {/* Exact: every other admin path starts with /admin, so a prefix match
+            here would light the dashboard up on every screen. */}
+        <Link {...link('/admin', true)} href="/admin">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="9" rx="1.5" />
+            <rect x="14" y="3" width="7" height="5" rx="1.5" />
+            <rect x="14" y="10" width="7" height="11" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+          </svg>
+          <span>Dashboard</span>
+        </Link>
+      </div>
+
+      <div className={styles.navGroup}>
         <div className={styles.navGroupTitle}>Pipeline</div>
         <Link {...link('/admin/leads')} href="/admin/leads">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -46,6 +61,22 @@ export default function AdminNav({ showTeam }: { showTeam: boolean }) {
             <path d="M4 5h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
           </svg>
           <span>Leads</span>
+        </Link>
+        <Link {...link('/admin/quizzes')} href="/admin/quizzes">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 11l3 3 7-7" />
+            <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" />
+          </svg>
+          <span>Fit finder</span>
+        </Link>
+        <Link {...link('/admin/catalog')} href="/admin/catalog">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+            <circle cx="8" cy="6" r="1.6" />
+            <circle cx="14" cy="12" r="1.6" />
+            <circle cx="10" cy="18" r="1.6" />
+          </svg>
+          <span>Rate catalog</span>
         </Link>
       </div>
 

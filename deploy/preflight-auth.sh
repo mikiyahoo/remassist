@@ -91,6 +91,18 @@ select count(*)              as users,
   from users;
 SQL
 
+echo "== Lead data (must survive migration 0001) =="
+psql "$DATABASE_URL" -q <<'SQL'
+select count(*) as leads,
+       count(first_name)       as have_first_name,
+       count(service_interest) as have_service_interest,
+       count(raw_fields)       as have_raw_fields
+  from leads;
+SQL
+echo "   0001 adds those three columns as nullable, so rows captured before it"
+echo "   ran read NULL. A total that matches what you had is the thing to check."
+echo
+
 echo "== BLOCKER CHECK: case-duplicate addresses =="
 echo "   Any row below means 0004 cannot create users_email_lower_idx, so the"
 echo "   deploy aborts at the migrate step. That happens BEFORE the symlink"
