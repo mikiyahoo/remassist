@@ -948,6 +948,41 @@
 }
 .modalFoot .panelNote { margin-right: auto; max-width: 22rem; }
 
+/* ---------- FAQ section editor ---------- */
+/* Two columns. Six sections down one column is a tall page of near-identical
+   rows, and each form is two short fields — a title and a URL fragment — so
+   half the width is more than either needs. */
+.sectionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* Hairlines rather than a grid gap, so the cells read as one table instead of
+   six floating cards. border-TOP, not bottom: the row to exempt is the first
+   one, and :nth-child(-n+2) names it without needing to know how many
+   sections there are. */
+.sectionCell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 22px;
+  border-top: 1px solid var(--hairline);
+}
+.sectionCell:nth-child(-n+2) { border-top: 0; }
+/* :not(:last-child) so an odd number of sections does not leave a divider
+   pointing at empty space. */
+.sectionCell:nth-child(odd):not(:last-child) { border-right: 1px solid var(--hairline); }
+/* The anchor and its save button share a line under the title: the anchor is a
+   URL fragment, so it is always short. */
+.sectionRow { display: flex; align-items: flex-end; gap: 12px; }
+
+/* One column well before the page's own 1180px breakpoint — this grid lives
+   inside a panel, so it runs out of room sooner than the page does. */
+@media (max-width: 1000px) {
+  .sectionGrid { grid-template-columns: minmax(0, 1fr); }
+  .sectionCell:nth-child(2) { border-top: 1px solid var(--hairline); }
+  .sectionCell:nth-child(odd):not(:last-child) { border-right: 0; }
+}
+
 /* ---------- sign-in ---------- */
 .signinWrap {
   min-height: 100vh;

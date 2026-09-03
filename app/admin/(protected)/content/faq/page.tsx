@@ -250,36 +250,48 @@ export default async function FaqListPage({
                 </p>
               </div>
             </div>
-            {groups.map((g) => (
-              <form className={styles.inviteRow} action={saveFaqGroup} key={g.id}>
-                <input type="hidden" name="id" value={g.id} />
-                <div className={`${styles.field} ${styles.grow}`}>
-                  <label className={styles.fieldLabel} htmlFor={`t-${g.id}`}>Title</label>
-                  <input
-                    className={styles.control}
-                    id={`t-${g.id}`}
-                    name="title"
-                    defaultValue={g.title}
-                    required
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel} htmlFor={`s-${g.id}`}>Anchor</label>
-                  <input
-                    className={styles.control}
-                    id={`s-${g.id}`}
-                    name="slug"
-                    defaultValue={g.slug}
-                    pattern="[a-z][a-z\-]*[a-z]"
-                    title="Lowercase letters and hyphens only — it is part of a URL"
-                    required
-                  />
-                </div>
-                <button className={`${styles.btn} ${styles.btnGhost}`} type="submit">
-                  Save section
-                </button>
-              </form>
-            ))}
+            {/* The form IS the grid cell — two sections abreast rather than six
+                full-width rows of two short fields each. */}
+            <div className={styles.sectionGrid}>
+              {groups.map((g) => (
+                <form className={styles.sectionCell} action={saveFaqGroup} key={g.id}>
+                  <input type="hidden" name="id" value={g.id} />
+                  <div className={styles.field}>
+                    <label className={styles.fieldLabel} htmlFor={`t-${g.id}`}>Title</label>
+                    <input
+                      className={styles.control}
+                      id={`t-${g.id}`}
+                      name="title"
+                      defaultValue={g.title}
+                      required
+                    />
+                  </div>
+                  <div className={styles.sectionRow}>
+                    <div className={`${styles.field} ${styles.grow}`}>
+                      <label className={styles.fieldLabel} htmlFor={`s-${g.id}`}>Anchor</label>
+                      <input
+                        className={styles.control}
+                        id={`s-${g.id}`}
+                        name="slug"
+                        defaultValue={g.slug}
+                        pattern="[a-z][a-z\-]*[a-z]"
+                        title="Lowercase letters and hyphens only — it is part of a URL"
+                        required
+                      />
+                    </div>
+                    {/* Named for a screen reader: six buttons all reading
+                        "Save" is six identical announcements. */}
+                    <button
+                      className={`${styles.btn} ${styles.btnGhost}`}
+                      type="submit"
+                      aria-label={`Save section: ${g.title}`}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              ))}
+            </div>
             <div className={styles.panelFoot}>
               <span>A section holding no live questions renders nothing on the public page.</span>
               <Link className={styles.rowLink} href={href({ view: 'questions' })}>
