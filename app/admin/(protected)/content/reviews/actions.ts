@@ -23,13 +23,54 @@ import { canEditContent } from '@/lib/auth/roles';
  * than merely suggested: a source must keep a working link, so a reader can
  * check the original; and nothing here deletes, so a review that is taken down
  * still has its wording on record.
+ *
+ * These are called from two screens — the list, and one review's edit page —
+ * and each returns to the one it was called from. See backToReview.
  */
 
 const MAX_SHORT = 200;
 const MAX_BODY = 4000;
 
-function back(param: 'ok' | 'error', code: string): never {
-  redirect(`/admin/content/reviews?${param}=${code}`);
+/**
+ * Back to the list.
+ *
+ * The list is tabbed by source, so every redirect that knows which source it
+ * touched names it. Landing on Trustpilot after hiding a Google review is the
+ * kind of thing that makes a tab bar feel broken when each tab works
+ * perfectly on its own. `back` without a tab is for the failures that happen
+ * before a source is known — no database, no such row.
+ */
+function back(param: 'ok' | 'error', code: string, tab?: string): never {
+  const at = tab ? `tab=${tab}&` : '';
+  redirect(`/admin/content/reviews?${at}${param}=${code}`);
+}
+
+/**
+ * Back to one review's edit page rather than to the list.
+ *
+ * Used where staying put is the useful outcome: a validation failure has to
+ * return to the form holding the text — losing a re-typed quote to a rating of
+ * 6 is how an editor learns to stop correcting things — and hiding or
+ * reordering from the edit page should not eject you from it, since the second
+ * move up would otherwise need a round trip through the list.
+ */
+function backToReview(id: string, param: 'ok' | 'error', code: string): never {
+  redirect(`/admin/content/reviews/${id}?${param}=${code}`);
+}
+
+/**
+ * Back to the list with the add form still open.
+ *
+ * `?add=1` is what reveals that form, so redirecting without it answers a
+ * rejected submission by closing the thing the editor was typing into.
+ */
+function backToAdd(source: string, code: string): never {
+  redirect(`/admin/content/reviews?tab=${source}&add=1&error=${code}`);
+}
+
+/** Which screen the form was submitted from; see backToReview. */
+function cameFromEditPage(formData: FormData): boolean {
+  return formData.get('from') === 'item';
 }
 
 async function assertEditor() {
@@ -61,11 +102,13 @@ export async function saveReview(formData: FormData): Promise<void> {
   const body = String(formData.get('body') ?? '').trim();
   const rating = ratingOf(formData.get('rating'));
 
-  if (!author || !dateText || !body) back('error', 'empty');
+  if (!author || !dateText || !body) backToReview(id, 'error', 'empty');
   if (author.length > MAX_SHORT || meta.length > MAX_SHORT
-    || dateText.length > MAX_SHORT || headline.length > MAX_SHORT) back('error', 'too-long');
-  if (body.length > MAX_BODY) back('error', 'too-long');
-  if (rating === null) back('error', 'bad-rating');
+    || dateText.length > MAX_SHORT || headline.length > MAX_SHORT) {
+    backToReview(id, 'error', 'too-long');
+  }
+  if (body.length > MAX_BODY) backToReview(id, 'error', 'too-long');
+  if (rating === null) backToReview(id, 'error', 'bad-rating');
 
   const db = getDb();
   const [row] = await db
@@ -75,18 +118,20 @@ export async function saveReview(formData: FormData): Promise<void> {
        above every Google review. */
     .set({ author, meta, dateText, headline: headline || null, body, rating })
     .where(eq(reviews.id, id))
-    .returning({ id: reviews.id });
+    .returning({ id: reviews.id, source: reviews.source });
 
   if (!row) back('error', 'not-found');
 
   published();
-  back('ok', 'saved');
+  back('ok', 'saved', row.source);
 }
 
 export async function addReview(formData: FormData): Promise<void> {
   await assertEditor();
   if (!isDatabaseConfigured()) back('error', 'no-database');
 
+  /* The tab the add form was opened on. Named in every redirect below,
+     including the rejections, so a bad rating does not also move you. */
   const source = String(formData.get('source') ?? '');
   const author = String(formData.get('author') ?? '').trim();
   const meta = String(formData.get('meta') ?? '').trim();
@@ -95,8 +140,13 @@ export async function addReview(formData: FormData): Promise<void> {
   const body = String(formData.get('body') ?? '').trim();
   const rating = ratingOf(formData.get('rating'));
 
-  if (!author || !dateText || !body) back('error', 'empty');
-  if (rating === null) back('error', 'bad-rating');
+  if (!author || !dateText || !body) backToAdd(source, 'empty');
+  /* The same length gate saveReview applies. The form's maxLength stops a paste
+     in a browser; this stops one that did not come from the form. */
+  if (author.length > MAX_SHORT || meta.length > MAX_SHORT
+    || dateText.length > MAX_SHORT || headline.length > MAX_SHORT) backToAdd(source, 'too-long');
+  if (body.length > MAX_BODY) backToAdd(source, 'too-long');
+  if (rating === null) backToAdd(source, 'bad-rating');
 
   const db = getDb();
   const [known] = await db
@@ -104,7 +154,7 @@ export async function addReview(formData: FormData): Promise<void> {
     .from(reviewSources)
     .where(eq(reviewSources.source, source as 'trustpilot' | 'google'))
     .limit(1);
-  if (!known) back('error', 'source-not-found');
+  if (!known) backToAdd(source, 'source-not-found');
 
   const [{ n }] = await db
     .select({ n: count() })
@@ -127,7 +177,7 @@ export async function addReview(formData: FormData): Promise<void> {
   });
 
   published();
-  back('ok', 'added');
+  back('ok', 'added', known.source);
 }
 
 export async function setReviewPublished(formData: FormData): Promise<void> {
@@ -142,12 +192,14 @@ export async function setReviewPublished(formData: FormData): Promise<void> {
     .update(reviews)
     .set({ published: next })
     .where(eq(reviews.id, id))
-    .returning({ id: reviews.id });
+    .returning({ id: reviews.id, source: reviews.source });
 
   if (!row) back('error', 'not-found');
 
   published();
-  back('ok', next ? 'published' : 'unpublished');
+  const code = next ? 'published' : 'unpublished';
+  if (cameFromEditPage(formData)) backToReview(id, 'ok', code);
+  back('ok', code, row.source);
 }
 
 /** Swap with a neighbour inside the source, in one transaction. See moveFaqItem. */
@@ -174,7 +226,12 @@ export async function moveReview(formData: FormData): Promise<void> {
 
   const at = siblings.findIndex((s) => s.id === item.id);
   const swapWith = direction === 'up' ? siblings[at - 1] : siblings[at + 1];
-  if (!swapWith) back('ok', 'moved');
+  /* Already at the end it was asked to move towards. Not an error — the button
+     is disabled there, so this is a double-submit or a stale page. */
+  if (!swapWith) {
+    if (cameFromEditPage(formData)) backToReview(id, 'ok', 'moved');
+    back('ok', 'moved', item.source);
+  }
 
   await db.transaction(async (tx) => {
     await tx.update(reviews).set({ sortOrder: swapWith.sortOrder }).where(eq(reviews.id, item.id));
@@ -182,12 +239,23 @@ export async function moveReview(formData: FormData): Promise<void> {
   });
 
   published();
-  back('ok', 'moved');
+  if (cameFromEditPage(formData)) backToReview(id, 'ok', 'moved');
+  back('ok', 'moved', item.source);
 }
 
+/** The list tab holding the per-source figures. Mirrors the one in page.tsx. */
+const SOURCES_TAB = 'sources';
+
+/**
+ * The per-source figures, edited on the list's Sources tab.
+ *
+ * Every exit names that tab, for the same reason the review actions name
+ * theirs: a rejected save that also moves you to Trustpilot has told you two
+ * things and only one of them is true.
+ */
 export async function saveReviewSource(formData: FormData): Promise<void> {
   await assertEditor();
-  if (!isDatabaseConfigured()) back('error', 'no-database');
+  if (!isDatabaseConfigured()) back('error', 'no-database', SOURCES_TAB);
 
   const source = String(formData.get('source') ?? '');
   const url = String(formData.get('url') ?? '').trim();
@@ -195,8 +263,8 @@ export async function saveReviewSource(formData: FormData): Promise<void> {
   const footnote = String(formData.get('footnote') ?? '').trim();
   const stars = ratingOf(formData.get('stars'));
 
-  if (!url || !ratingLabel) back('error', 'empty');
-  if (stars === null) back('error', 'bad-rating');
+  if (!url || !ratingLabel) back('error', 'empty', SOURCES_TAB);
+  if (stars === null) back('error', 'bad-rating', SOURCES_TAB);
 
   /**
    * The link is what lets a reader go and check the review for themselves, so
@@ -207,9 +275,11 @@ export async function saveReviewSource(formData: FormData): Promise<void> {
   try {
     parsed = new URL(url);
   } catch {
-    back('error', 'bad-url');
+    back('error', 'bad-url', SOURCES_TAB);
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') back('error', 'bad-url');
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    back('error', 'bad-url', SOURCES_TAB);
+  }
 
   const db = getDb();
   const [row] = await db
@@ -218,8 +288,8 @@ export async function saveReviewSource(formData: FormData): Promise<void> {
     .where(eq(reviewSources.source, source as 'trustpilot' | 'google'))
     .returning({ source: reviewSources.source });
 
-  if (!row) back('error', 'source-not-found');
+  if (!row) back('error', 'source-not-found', SOURCES_TAB);
 
   published();
-  back('ok', 'source-saved');
+  back('ok', 'source-saved', SOURCES_TAB);
 }

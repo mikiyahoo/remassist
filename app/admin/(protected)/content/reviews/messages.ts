@@ -7,9 +7,9 @@
  */
 export const REVIEW_OK = {
   saved: 'Saved.',
-  added: 'Review added, and left off the page until you publish it.',
+  added: 'Review added, and hidden until you have checked it against the original.',
   published: 'That review is on the reviews page.',
-  unpublished: 'That review is off the page. Nothing was deleted — the wording is kept.',
+  unpublished: 'That review is hidden. Nothing was deleted — the wording is kept.',
   moved: 'Order updated.',
   'source-saved': 'Source details saved.',
 } as const;

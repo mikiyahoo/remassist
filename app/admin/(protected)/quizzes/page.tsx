@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import Link from 'next/link';
 import { desc, eq, isNull } from 'drizzle-orm';
 import { getDb, isDatabaseConfigured } from '@/db';
@@ -6,6 +5,7 @@ import { leads, quizSubmissions } from '@/db/schema';
 import { requireUser } from '@/lib/auth/require';
 import { answerFor, formatDate, orderedAnswers, questionFor } from '@/lib/leads/display';
 import styles from '../../admin.module.css';
+import AnswerAccordion from './AnswerAccordion';
 
 /**
  * Fit finder submissions.
@@ -106,22 +106,41 @@ export default async function QuizzesPage({
             return (
               <section className={`${styles.panel} ${styles.section}`} key={q.id}>
                 <div className={styles.panelHead}>
-                  <h2 className={styles.panelTitle}>
-                    {q.leadId
-                      ? (q.leadName ?? q.leadEmail ?? 'Linked lead')
-                      : 'Anonymous — no contact details'}
-                  </h2>
-                  <span className={styles.panelNote}>
+                  <div>
+                    <h2 className={styles.panelTitle}>
+                      {q.leadId
+                        ? (q.leadName ?? q.leadEmail ?? 'Linked lead')
+                        : 'Anonymous — no contact details'}
+                      {/* Email sits on the same line as the name, not under it:
+                          the card head is one row, name · email on the left,
+                          date · Open the lead on the right. */}
+                      {q.leadId && q.leadEmail && (
+                        <span className={styles.panelTitleMeta}>
+                          <span aria-hidden="true"> · </span>
+                          <span className={styles.mono}>{q.leadEmail}</span>
+                        </span>
+                      )}
+                    </h2>
+                  </div>
+                  <span className={`${styles.panelNote} ${styles.panelHeadNote}`}>
                     <span className={styles.mono}>{formatDate(q.createdAt)}</span>
                     {!q.completed && <span className={styles.tag}>Partial</span>}
+                    {q.leadId && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <Link className={styles.panelHeadLink} href={`/admin/leads/${q.leadId}`}>
+                          Open the lead
+                        </Link>
+                      </>
+                    )}
                   </span>
                 </div>
 
-                {/* The estimate stands on its own as a card at the top, so the
-                    list scans as one run of service lines and prices; the answers
-                    that produced it fold away under the accordion below. */}
+                {/* One mini card per figure, so the list scans as columns of
+                    service line, tier and price. The answers that produced the
+                    estimate fold away behind the bottom arrow. */}
                 {q.result && (
-                  <div className={styles.quoteCard}>
+                  <div className={styles.statGrid}>
                     <Quote label="Service" value={q.result.service} />
                     <Quote label="Tier" value={q.result.tier} />
                     <Quote label="Seats" value={q.result.seats} />
@@ -131,14 +150,7 @@ export default async function QuizzesPage({
                   </div>
                 )}
 
-                {q.leadId ? (
-                  <p className={styles.panelIntro}>
-                    <Link className={styles.rowLink} href={`/admin/leads/${q.leadId}`}>
-                      Open the lead
-                    </Link>
-                    {q.leadEmail && <span className={styles.mono}> · {q.leadEmail}</span>}
-                  </p>
-                ) : (
+                {!q.leadId && (
                   <p className={styles.panelIntro}>
                     {/* Said plainly, because the instinct on seeing an interesting
                         answer set is to look for the person attached to it. */}
@@ -147,23 +159,25 @@ export default async function QuizzesPage({
                   </p>
                 )}
 
-                <details className={styles.answers}>
-                  <summary><span>Answers ({answerPairs.length})</span></summary>
-                  <dl className={styles.qa}>
-                    {answerPairs.map(([key, value]) => {
+                <AnswerAccordion count={answerPairs.length}>
+                  <div className={styles.answerList}>
+                    {answerPairs.map(([key, value], i) => {
                       const a = answerFor(key, value);
                       return (
-                        <Fragment key={key}>
-                          <dt>{questionFor(key) ?? key}</dt>
-                          <dd>
-                            {a.label}
-                            {a.note && <span className={styles.answerNote}> — {a.note}</span>}
-                          </dd>
-                        </Fragment>
+                        <div className={styles.answerCard} key={key}>
+                          <span className={styles.answerNum}>{i + 1}</span>
+                          <div className={styles.answerBody}>
+                            <span className={styles.answerQ}>{questionFor(key) ?? key}</span>
+                            <span className={styles.answerA}>
+                              {a.label}
+                              {a.note && <span className={styles.answerNote}> — {a.note}</span>}
+                            </span>
+                          </div>
+                        </div>
                       );
                     })}
-                  </dl>
-                </details>
+                  </div>
+                </AnswerAccordion>
               </section>
             );
           })
@@ -181,7 +195,7 @@ export default async function QuizzesPage({
 
 function Quote({ label, value }: { label: string; value?: string | number }) {
   return (
-    <div className={styles.quoteItem}>
+    <div className={styles.statCard}>
       <span className={styles.quoteLabel}>{label}</span>
       <span className={styles.quoteValue}>
         {value ?? <span className={styles.none}>—</span>}

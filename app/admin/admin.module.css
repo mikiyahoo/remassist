@@ -38,6 +38,7 @@
   --ink-400: #667180;
   --ink-600: #667180;
   --medium-50: #fef9e7;
+  --medium-500: #e5a82e;
   --medium-700: #92670a;
   --ink-50: #f5f7fa;
   --low-50: #ecfaf1;
@@ -311,7 +312,32 @@
   flex-wrap: wrap;
 }
 .panelTitle { margin: 0; font-size: 16px; font-weight: 700; color: var(--ink-900); }
+/* The email after a person's name in the panel head, on the same line. */
+.panelTitleMeta {
+  color: var(--ink-500);
+  font-weight: 400;
+  font-size: 13px;
+  white-space: nowrap;
+}
 .panelNote { font-size: 12.5px; color: var(--ink-500); font-weight: 400; }
+/* A panel head's right-hand note when it carries a link next to the timestamp:
+   "2026-09-01 17:11 UTC · Open the lead", held on one baseline, wrapping
+   gracefully on a narrow card. */
+.panelHeadNote {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.panelHeadLink {
+  color: var(--blue-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+.panelHeadLink:hover { color: var(--brand-blue); }
 .panelFoot {
   padding: 14px 22px;
   font-size: 12.5px;
@@ -543,56 +569,85 @@
 }
 .quoteValue { font-size: 17px; font-weight: 700; }
 
-/* The same quote strip, as a card at the top of a fit finder submission:
-   the estimate stands alone so the list scans as one run of service lines and
-   prices, while the answers that produced it fold away under .answers. */
-.quoteCard {
-  margin: 16px 22px 0;
+/* One mini card per figure, so the estimate reads as stat tiles: the list
+   scans as columns of service line, tier and price. */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 10px;
+  padding: 16px 22px 0;
+}
+.statCard {
   display: flex;
-  flex-wrap: wrap;
-  gap: 26px;
-  padding: 14px 18px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
   background: #fbfcfe;
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
 }
 
-/* The answer set behind the quote card, collapsed by default so each submission
-   stays a card and a price. A <details> gives the open/close toggle with no
-   client JS, matching the marketing accordions. */
-.answers { margin: 16px 22px 0; border-top: 1px solid var(--hairline); }
-.answers > summary {
-  list-style: none;
-  cursor: pointer;
+/* The answer set behind the estimate cards, folded away by default. The
+   toggle is the bottom arrow, so the answers open above it and the arrow is
+   always the last thing on the card. */
+.answerAccordion { border-top: 1px solid var(--hairline); margin-top: 4px; }
+.answerAccordionBodyClosed { display: none; }
+.answerAccordionToggle {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 0 16px;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 22px 16px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
   font-size: 13px;
   font-weight: 600;
   color: var(--blue-700);
 }
-.answers > summary::-webkit-details-marker { display: none; }
-.answers > summary:hover { color: var(--brand-blue); }
-.answers > summary::after {
-  content: "\002B";
+.answerAccordionToggle:hover { color: var(--brand-blue); }
+.answerAccordionToggle svg {
+  width: 18px;
+  height: 18px;
   flex: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--ink-50);
-  color: var(--blue-700);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The answers themselves, each in a rounded box with the step number on the
+   left — the same shape the public quiz result uses for a reviewed answer. */
+.answerList { display: flex; flex-direction: column; gap: 8px; padding: 14px 22px 4px; }
+.answerCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fbfcfe;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+.answerNum {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--hairline);
   display: grid;
   place-items: center;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1;
-  transition: background 150ms, color 150ms;
+  font-family: var(--admin-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-500);
 }
-.answers > summary:hover::after { background: rgba(81, 141, 224, 0.10); }
-.answers[open] > summary { border-bottom: 1px solid var(--hairline); }
-.answers[open] > summary::after { content: "\2212"; }
+.answerBody { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.answerQ { font-size: 12px; color: var(--ink-500); font-weight: 500; }
+.answerA { font-size: 14px; color: var(--ink-900); font-weight: 600; }
 .statusForm { display: flex; gap: 10px; align-items: center; padding: 16px 22px; flex-wrap: wrap; }
 
 /* ---------- caution banner ---------- */
@@ -777,6 +832,83 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* ---------- FAQ section headings ---------- */
+/* A section's name inside the list. Not a panelHead: that is a panel's own
+   header, and there is one panel here holding six sections. The rows really are
+   contiguous per section — the list is sorted by section first — so this labels
+   a run rather than decorating a row. */
+.faqGroupRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px 22px 9px;
+  border-bottom: 1px solid var(--hairline);
+  background: #fbfcfe;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+/* The first heading sits against the panel's rounded top, where a border-top
+   would show as a stray line inside the corner. */
+.faqGroupRow:first-child { padding-top: 18px; }
+.faqGroupCount {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #98a2b3;
+}
+
+/* ---------- modal ---------- */
+/* The native <dialog>. Sized and positioned by the browser, so there is no
+   overlay element, no z-index and no scroll lock to get wrong — see
+   app/admin/(protected)/ModalDialog.tsx for why that matters. */
+.modal {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: min(44rem, calc(100vw - 32px));
+  width: 100%;
+  max-height: calc(100vh - 64px);
+  color: var(--ink-900);
+}
+/* Only paints for a dialog opened with showModal(), which is the reason the
+   component calls it rather than rendering `open`. */
+.modal::backdrop { background: rgba(0, 5, 67, 0.45); }
+.modalPanel {
+  background: #fff;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.modalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--hairline);
+}
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 22px;
+}
+/* Buttons right, the note taking the slack on its left, so the primary action
+   lands where the eye leaves the last field. */
+.modalFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.modalFoot .panelNote { margin-right: auto; max-width: 22rem; }
 
 /* ---------- sign-in ---------- */
 .signinWrap {
@@ -1473,11 +1605,15 @@ a.glanceRow:hover { color: var(--blue-700); }
   .grid2, .grid2eq { grid-template-columns: 1fr; }
 }
 
-/* Section title/anchor editing, folded away. It is touched roughly never —
-   changing an anchor breaks an inbound link — so it should not sit open above
-   the questions competing for attention. */
-.groupSettings > form + form { border-top: 1px solid var(--hairline); }
-.groupSettings > summary {
+/* Settings folded behind a summary, shared by the FAQ's section titles and
+   anchors and the reviews screen's per-source figures. Both are touched
+   roughly never — changing an anchor breaks an inbound link, and the star
+   score belongs to the source — so neither should sit open above the list
+   competing for attention. */
+.groupSettings > form + form,
+.sourceSettings > form + form { border-top: 1px solid var(--hairline); }
+.groupSettings > summary,
+.sourceSettings > summary {
   padding: 12px 22px;
   font-size: 12.5px;
   font-weight: 600;
@@ -1485,10 +1621,74 @@ a.glanceRow:hover { color: var(--blue-700); }
   cursor: pointer;
   list-style: none;
 }
-.groupSettings > summary::-webkit-details-marker { display: none; }
-.groupSettings > summary::before { content: '▸ '; color: #98a2b3; }
-.groupSettings[open] > summary::before { content: '▾ '; }
-.groupSettings > summary:hover { color: var(--blue-700); }
+.groupSettings > summary::-webkit-details-marker,
+.sourceSettings > summary::-webkit-details-marker { display: none; }
+.groupSettings > summary::before,
+.sourceSettings > summary::before { content: '▸ '; color: #98a2b3; }
+.groupSettings[open] > summary::before,
+.sourceSettings[open] > summary::before { content: '▾ '; }
+.groupSettings > summary:hover,
+.sourceSettings > summary:hover { color: var(--blue-700); }
+
+/* ---------- review rows, ported from the prototype ---------- */
+
+/* A review gets a card-sized row rather than the FAQ's single line, and the
+   difference is not decoration. A question is identified by its wording, which
+   fits on a line; a review is somebody else's sentence that an editor is here
+   to check against its source, and a truncated quote cannot be checked. So the
+   whole quote shows: avatar, stars, text, then one meta line carrying who said
+   it, where, and when. */
+.review {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--hairline);
+}
+.review:last-child { border-bottom: 0; }
+.review .avatar { margin-top: 2px; }
+/* Google's rows take the second avatar tint. Not the prototype's colour-by-row
+   index — there are exactly two sources, so the colour can mean the source. */
+.avatarAlt { background: linear-gradient(135deg, var(--blue-300), #0e8fd8); }
+.reviewMain { flex: 1; min-width: 0; }
+.stars { display: inline-flex; gap: 2px; color: var(--medium-500); margin-bottom: 2px; }
+.stars svg { width: 14px; height: 14px; display: block; }
+/* Trustpilot reviews carry a headline of their own; Google's do not. */
+.reviewHead { margin: 2px 0 0; font-size: 13.5px; font-weight: 700; color: var(--ink-900); }
+.reviewText {
+  font-size: 13.5px;
+  color: var(--ink-700);
+  line-height: 1.6;
+  margin: 4px 0 8px;
+  overflow-wrap: anywhere;
+}
+.reviewMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--ink-500);
+}
+.reviewMeta b { font-weight: 700; color: var(--ink-900); }
+.reviewSrc {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+/* Top-aligned with the stars, not centred on the quote: a two-line review and
+   a ten-line one should put their buttons in the same place. */
+.reviewActions { display: flex; gap: 2px; flex: none; }
+
+@media (max-width: 720px) {
+  /* The avatar is the first thing to go: it identifies nothing the meta line
+     below does not say in words. */
+  .review { padding: 16px 18px; gap: 12px; flex-wrap: wrap; }
+  .review .avatar { display: none; }
+  .reviewActions { width: 100%; justify-content: flex-end; }
+}
 
 /* ---------- responsive shell, ported from the prototype ---------- */
 
