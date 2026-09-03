@@ -99,63 +99,74 @@ export default async function QuizzesPage({
             </p>
           </div>
         ) : (
-          rows.map((q) => (
-            <section className={`${styles.panel} ${styles.section}`} key={q.id}>
-              <div className={styles.panelHead}>
-                <h2 className={styles.panelTitle}>
-                  {q.leadId
-                    ? (q.leadName ?? q.leadEmail ?? 'Linked lead')
-                    : 'Anonymous — no contact details'}
-                </h2>
-                <span className={styles.panelNote}>
-                  <span className={styles.mono}>{formatDate(q.createdAt)}</span>
-                  {!q.completed && <span className={styles.tag}>Partial</span>}
-                </span>
-              </div>
-
-              {q.leadId ? (
-                <p className={styles.panelIntro}>
-                  <Link className={styles.rowLink} href={`/admin/leads/${q.leadId}`}>
-                    Open the lead
-                  </Link>
-                  {q.leadEmail && <span className={styles.mono}> · {q.leadEmail}</span>}
-                </p>
-              ) : (
-                <p className={styles.panelIntro}>
-                  {/* Said plainly, because the instinct on seeing an interesting
-                      answer set is to look for the person attached to it. */}
-                  This person did not leave an address, so there is nobody to reply to. The
-                  answers are still worth reading as demand.
-                </p>
-              )}
-
-              <dl className={styles.qa}>
-                {orderedAnswers(q.answers).map(([key, value]) => {
-                  const a = answerFor(key, value);
-                  return (
-                    <Fragment key={key}>
-                      <dt>{questionFor(key) ?? key}</dt>
-                      <dd>
-                        {a.label}
-                        {a.note && <span className={styles.answerNote}> — {a.note}</span>}
-                      </dd>
-                    </Fragment>
-                  );
-                })}
-              </dl>
-
-              {q.result && (
-                <div className={`${styles.quote} ${styles.quoteDivided}`}>
-                  <Quote label="Service" value={q.result.service} />
-                  <Quote label="Tier" value={q.result.tier} />
-                  <Quote label="Seats" value={q.result.seats} />
-                  <Quote label="Hours" value={q.result.hours} />
-                  <Quote label="Rate" value={q.result.rate ? `$${q.result.rate}/hr` : undefined} />
-                  <Quote label="Estimate" value={q.result.cost} />
+          rows.map((q) => {
+            /* Computed once so the accordion can say how many questions were
+               answered without the visitor having to open it. */
+            const answerPairs = orderedAnswers(q.answers);
+            return (
+              <section className={`${styles.panel} ${styles.section}`} key={q.id}>
+                <div className={styles.panelHead}>
+                  <h2 className={styles.panelTitle}>
+                    {q.leadId
+                      ? (q.leadName ?? q.leadEmail ?? 'Linked lead')
+                      : 'Anonymous — no contact details'}
+                  </h2>
+                  <span className={styles.panelNote}>
+                    <span className={styles.mono}>{formatDate(q.createdAt)}</span>
+                    {!q.completed && <span className={styles.tag}>Partial</span>}
+                  </span>
                 </div>
-              )}
-            </section>
-          ))
+
+                {/* The estimate stands on its own as a card at the top, so the
+                    list scans as one run of service lines and prices; the answers
+                    that produced it fold away under the accordion below. */}
+                {q.result && (
+                  <div className={styles.quoteCard}>
+                    <Quote label="Service" value={q.result.service} />
+                    <Quote label="Tier" value={q.result.tier} />
+                    <Quote label="Seats" value={q.result.seats} />
+                    <Quote label="Hours" value={q.result.hours} />
+                    <Quote label="Rate" value={q.result.rate ? `$${q.result.rate}/hr` : undefined} />
+                    <Quote label="Estimate" value={q.result.cost} />
+                  </div>
+                )}
+
+                {q.leadId ? (
+                  <p className={styles.panelIntro}>
+                    <Link className={styles.rowLink} href={`/admin/leads/${q.leadId}`}>
+                      Open the lead
+                    </Link>
+                    {q.leadEmail && <span className={styles.mono}> · {q.leadEmail}</span>}
+                  </p>
+                ) : (
+                  <p className={styles.panelIntro}>
+                    {/* Said plainly, because the instinct on seeing an interesting
+                        answer set is to look for the person attached to it. */}
+                    This person did not leave an address, so there is nobody to reply to. The
+                    answers are still worth reading as demand.
+                  </p>
+                )}
+
+                <details className={styles.answers}>
+                  <summary><span>Answers ({answerPairs.length})</span></summary>
+                  <dl className={styles.qa}>
+                    {answerPairs.map(([key, value]) => {
+                      const a = answerFor(key, value);
+                      return (
+                        <Fragment key={key}>
+                          <dt>{questionFor(key) ?? key}</dt>
+                          <dd>
+                            {a.label}
+                            {a.note && <span className={styles.answerNote}> — {a.note}</span>}
+                          </dd>
+                        </Fragment>
+                      );
+                    })}
+                  </dl>
+                </details>
+              </section>
+            );
+          })
         )}
 
         {rows.length === PAGE_SIZE && (

@@ -542,9 +542,57 @@
   font-weight: 700;
 }
 .quoteValue { font-size: 17px; font-weight: 700; }
-/* For a quote strip that follows the answers directly, with no panelHead of
-   its own to divide it. */
-.quoteDivided { border-top: 1px solid var(--hairline); }
+
+/* The same quote strip, as a card at the top of a fit finder submission:
+   the estimate stands alone so the list scans as one run of service lines and
+   prices, while the answers that produced it fold away under .answers. */
+.quoteCard {
+  margin: 16px 22px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  padding: 14px 18px;
+  background: #fbfcfe;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+}
+
+/* The answer set behind the quote card, collapsed by default so each submission
+   stays a card and a price. A <details> gives the open/close toggle with no
+   client JS, matching the marketing accordions. */
+.answers { margin: 16px 22px 0; border-top: 1px solid var(--hairline); }
+.answers > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-700);
+}
+.answers > summary::-webkit-details-marker { display: none; }
+.answers > summary:hover { color: var(--brand-blue); }
+.answers > summary::after {
+  content: "\002B";
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink-50);
+  color: var(--blue-700);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background 150ms, color 150ms;
+}
+.answers > summary:hover::after { background: rgba(81, 141, 224, 0.10); }
+.answers[open] > summary { border-bottom: 1px solid var(--hairline); }
+.answers[open] > summary::after { content: "\2212"; }
 .statusForm { display: flex; gap: 10px; align-items: center; padding: 16px 22px; flex-wrap: wrap; }
 
 /* ---------- caution banner ---------- */
@@ -625,6 +673,110 @@
   max-width: 40rem;
 }
 .confirmCheck input { margin-top: 2px; flex: none; width: 16px; height: 16px; accent-color: var(--brand-blue); }
+
+/* ---------- filter bar ---------- */
+/* The prototype's standalone filter row, above the panel rather than attached
+   to it. .filters further up is the other kind — a strip inside a panel's own
+   border — and the two are not interchangeable: this one has a pill group that
+   has to sit on the page background to read as a set of tabs. */
+.filterbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.filterEnd { margin-left: auto; }
+
+.filterPills {
+  display: inline-flex;
+  gap: 4px;
+  background: #fff;
+  padding: 5px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+}
+.fbtn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 13px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-600);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 130ms, color 130ms;
+}
+.fbtn:hover { color: var(--ink-900); background: var(--ink-50); }
+.fbtn:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 1px; }
+.fbtnOn, .fbtnOn:hover { background: var(--navy-900); color: #fff; }
+/* Tinted from the pill's own text colour rather than a fixed grey, so the
+   count sits correctly on both the white and the navy state. */
+.fbtnCount {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.fbtnOn .fbtnCount { background: rgba(255, 255, 255, 0.18); }
+
+/* A select styled as one of the bar's controls. The native arrow is replaced
+   by an inline chevron so the control matches the height and border of the
+   pill group beside it on every platform. */
+.selectField {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+}
+.selectField select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--ink-700);
+  padding-right: 22px;
+  min-width: 8rem;
+  cursor: pointer;
+}
+.selectField select:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 3px; }
+.selectField svg {
+  position: absolute;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  color: var(--ink-400);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Visually hidden but read aloud — for a control whose only visible label is
+   its own current value. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 /* ---------- sign-in ---------- */
 .signinWrap {
@@ -861,6 +1013,7 @@
   flex-wrap: wrap;
 }
 .grow { flex: 1 1 18rem; }
+.fieldRow { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
 
 /* Role and status pills. Deliberately not colour alone: each reads as a word,
    so the state survives a monochrome screen and a colour-blind reader. */
@@ -945,17 +1098,23 @@
 
 /* Pipeline share. A bar because the shape is the point — 3 against 30 does not
    read as a difference in a column of digits. */
+/* The share cell: bar and label on one line, the bar taking whatever width is
+   left over. The bar was `min(240px, 40vw)`, measured against the viewport
+   rather than against its own column — which held while the Pipeline table was
+   full width and broke the moment it became half of a two-up row, wrapping the
+   percentage under the bar. A flex row asks the column, not the window. */
+.barCell { display: flex; align-items: center; gap: 10px; }
 .bar {
-  display: inline-block;
-  vertical-align: middle;
-  width: min(240px, 40vw);
+  flex: 1 1 auto;
+  min-width: 40px;
+  max-width: 240px;
   height: 8px;
   border-radius: 999px;
   background: #eef1f7;
   overflow: hidden;
 }
 .barFill { display: block; height: 100%; background: var(--brand-blue); border-radius: 999px; }
-.barPct { margin-left: 10px; font-size: 12px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
+.barPct { flex: none; font-size: 12px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
 
 /* The selected filter pill on the fit finder screen. */
 .pagerLinkOn {
@@ -1186,7 +1345,12 @@ a.faqQ:hover { color: var(--blue-700); }
   gap: 24px;
   margin-bottom: 24px;
 }
-.grid2eq { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid2eq {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
 
 /* "At a glance" — stacked sections divided by hairlines rather than separate
    panels, so the rail reads as one object beside the table. */
@@ -1312,7 +1476,7 @@ a.glanceRow:hover { color: var(--blue-700); }
 /* Section title/anchor editing, folded away. It is touched roughly never —
    changing an anchor breaks an inbound link — so it should not sit open above
    the questions competing for attention. */
-.groupSettings { border-top: 1px solid var(--hairline); }
+.groupSettings > form + form { border-top: 1px solid var(--hairline); }
 .groupSettings > summary {
   padding: 12px 22px;
   font-size: 12.5px;

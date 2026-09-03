@@ -170,49 +170,9 @@ export default async function DashboardPage() {
           />
         </div>
 
+        {/* Who just arrived, full width: it is the one table here worth reading
+            top to bottom, and the first question anyone opening the admin has. */}
         <section className={`${styles.panel} ${styles.section}`}>
-          <div className={styles.panelHead}>
-            <h2 className={styles.panelTitle}>Pipeline</h2>
-            <span className={styles.panelNote}>
-              {completed} of {quizzes} quizzes were completed
-            </span>
-          </div>
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr><th>Status</th><th>Leads</th><th aria-label="Share" /></tr>
-              </thead>
-              <tbody>
-                {LEAD_STATUSES.map((s) => {
-                  const n = statusCount.get(s) ?? 0;
-                  const pct = leadTotal > 0 ? Math.round((n / leadTotal) * 100) : 0;
-                  return (
-                    <tr key={s}>
-                      <td>
-                        <Link className={styles.rowLink} href={`/admin/leads?status=${s}`}>
-                          <span className={`${styles.pill} ${styles[`s_${s}`]}`}>{s}</span>
-                        </Link>
-                      </td>
-                      <td className={styles.mono}>{n}</td>
-                      <td>
-                        {/* A bar rather than only a number: the shape of the
-                            pipeline is the point, and 3 vs 30 does not read as
-                            a difference in a column of digits. */}
-                        <span className={styles.bar} aria-hidden="true">
-                          <span className={styles.barFill} style={{ width: `${pct}%` }} />
-                        </span>
-                        <span className={styles.barPct}>{pct}%</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <div className={styles.grid2}>
-        <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div>
               <h2 className={styles.panelTitle}>Recent leads</h2>
@@ -262,24 +222,73 @@ export default async function DashboardPage() {
           )}
         </section>
 
-        <AtAGlance
-          counts={{
-            faqLive: Number(faqCounts[0]?.faqLive ?? 0),
-            faqTotal: Number(faqCounts[0]?.faqTotal ?? 0),
-            reviewsLive: Number(reviewCounts[0]?.n ?? 0),
-            postsLive: Number(postCounts[0]?.live ?? 0),
-            postsTotal: Number(postCounts[0]?.total ?? 0),
-            quizzes,
-            anonymous,
-            catalogEmpty: Number(tierCounts[0]?.n ?? 0) === 0,
-            mailConfigured: Boolean(process.env.AUTH_RESEND_KEY),
-          }}
-        />
+        {/* Two breakdowns of the same leads side by side — one by status, one by
+            where they came from. Both are bars against a total, so they read as
+            a pair rather than as two unrelated panels. */}
+        <div className={styles.grid2eq}>
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <h2 className={styles.panelTitle}>Pipeline</h2>
+              <span className={styles.panelNote}>
+                {completed} of {quizzes} quizzes were completed
+              </span>
+            </div>
+            <div className={styles.tableWrap}>
+              <table className={styles.table}>
+                <thead>
+                  <tr><th>Status</th><th>Leads</th><th aria-label="Share" /></tr>
+                </thead>
+                <tbody>
+                  {LEAD_STATUSES.map((s) => {
+                    const n = statusCount.get(s) ?? 0;
+                    const pct = leadTotal > 0 ? Math.round((n / leadTotal) * 100) : 0;
+                    return (
+                      <tr key={s}>
+                        <td>
+                          <Link className={styles.rowLink} href={`/admin/leads?status=${s}`}>
+                            <span className={`${styles.pill} ${styles[`s_${s}`]}`}>{s}</span>
+                          </Link>
+                        </td>
+                        <td className={styles.mono}>{n}</td>
+                        <td className={styles.barCell}>
+                          {/* A bar rather than only a number: the shape of the
+                              pipeline is the point, and 3 vs 30 does not read as
+                              a difference in a column of digits. */}
+                          <span className={styles.bar} aria-hidden="true">
+                            <span className={styles.barFill} style={{ width: `${pct}%` }} />
+                          </span>
+                          <span className={styles.barPct}>{pct}%</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <TopSources rows={sourceRows} total={leadTotal} />
         </div>
 
-        <div className={styles.grid2eq}>
+        {/* The chart takes the wide column and the rail keeps its width, which
+            is what At a glance was drawn to be: a narrow object beside something
+            wider, not a full-width band of its own. */}
+        <div className={styles.grid2}>
           <LeadVolume days={days} />
-          <TopSources rows={sourceRows} total={leadTotal} />
+
+          <AtAGlance
+            counts={{
+              faqLive: Number(faqCounts[0]?.faqLive ?? 0),
+              faqTotal: Number(faqCounts[0]?.faqTotal ?? 0),
+              reviewsLive: Number(reviewCounts[0]?.n ?? 0),
+              postsLive: Number(postCounts[0]?.live ?? 0),
+              postsTotal: Number(postCounts[0]?.total ?? 0),
+              quizzes,
+              anonymous,
+              catalogEmpty: Number(tierCounts[0]?.n ?? 0) === 0,
+              mailConfigured: Boolean(process.env.AUTH_RESEND_KEY),
+            }}
+          />
         </div>
       </div>
     </>
