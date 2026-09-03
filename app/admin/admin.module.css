@@ -31,6 +31,19 @@
   --shadow-sm: 0 12px 35px rgba(0, 5, 67, 0.12);
   --admin-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
+  /* Copied verbatim from the Test Admin prototype so its components can be
+     ported without re-deriving colours by eye. The ones above were already
+     here under different names; these are the additions its stat cards, icon
+     buttons and status palette reference. */
+  --ink-400: #667180;
+  --ink-50: #f5f7fa;
+  --low-50: #ecfaf1;
+  --low-700: #0f5c2d;
+  --high-50: #fef6e7;
+  --high-700: #a35307;
+  --critical-50: #fef3f2;
+  --critical-600: #b42318;
+
   min-height: 100vh;
   background: #f5f7fa;
   color: var(--ink-900);
@@ -886,3 +899,129 @@
   .stackWide { padding: 14px 18px; }
   .rowActions { padding: 0 18px 14px; }
 }
+
+/* ---------- ported from the Test Admin prototype ---------- */
+
+/* Stat cards. The prototype's shape, which differs from the tiles this
+   replaces in three ways that all matter: an icon tile anchors the card, the
+   label sits ABOVE the value rather than under it, and the value is 800 weight
+   with negative tracking. Reading order becomes "what is this / how many"
+   instead of "how many / of what". */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.statCard {
+  background: #fff;
+  border-radius: var(--r-md);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: box-shadow 150ms, transform 150ms;
+}
+/* Every card is a link into the screen that can act on the number, which the
+   static prototype had no need to express. */
+.statCard:hover { transform: translateY(-1px); box-shadow: 0 16px 40px rgba(0, 5, 67, 0.16); }
+.statCard:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+.statTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.statIco {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: rgba(81, 141, 224, 0.11);
+  color: var(--brand-blue);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.statIco svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.statDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.deltaUp { color: var(--low-700); background: var(--low-50); }
+.deltaNeeds { color: var(--high-700); background: var(--high-50); }
+.statLabel { margin-top: 14px; font-size: 13px; color: var(--ink-500); font-weight: 500; }
+.statValue {
+  margin-top: 2px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink-900);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.statNote { margin-top: 6px; font-size: 12px; color: var(--ink-400); }
+
+/* Two-line table cells — the prototype's most-used pattern by a distance, and
+   the reason its tables read as denser without being harder to scan: the
+   identifying value is bold, the qualifier sits under it in small grey. */
+.cellPrimary { font-weight: 600; color: var(--ink-900); }
+.cellSecondary { display: block; margin-top: 2px; font-size: 12.5px; color: var(--ink-500); }
+
+/* Icon-only row actions. 72 uses in the prototype; the text buttons these
+   replace made every row as wide as its longest verb. */
+.iconBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-500);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 130ms, color 130ms;
+}
+.iconBtn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.iconBtn:hover { background: var(--ink-50); color: var(--ink-900); }
+.iconBtn:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 1px; }
+.iconBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.iconBtn:disabled:hover { background: transparent; color: var(--ink-500); }
+
+/* A drag affordance drawn in CSS, six dots, no asset. Used here as a visual
+   anchor beside the real reorder controls rather than as a drag handle: this
+   admin has no client-side drag, and a grip that cannot be dragged would be a
+   lie the prototype could afford and a working page cannot. */
+.grip {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: #c6cbd8;
+  background-image:
+    radial-gradient(circle at 25% 16.7%, currentColor 1.7px, transparent 1.8px),
+    radial-gradient(circle at 25% 50%, currentColor 1.7px, transparent 1.8px),
+    radial-gradient(circle at 25% 83.3%, currentColor 1.7px, transparent 1.8px),
+    radial-gradient(circle at 75% 16.7%, currentColor 1.7px, transparent 1.8px),
+    radial-gradient(circle at 75% 50%, currentColor 1.7px, transparent 1.8px),
+    radial-gradient(circle at 75% 83.3%, currentColor 1.7px, transparent 1.8px);
+}
+
+@media (max-width: 1180px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }

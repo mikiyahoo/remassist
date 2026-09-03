@@ -91,20 +91,28 @@ export default async function DashboardPage() {
       <Topbar subtitle="Everything the system has captured" />
 
       <div className={styles.view}>
-        <div className={styles.statRow}>
-          <Stat href="/admin/leads" value={leadTotal} label="Leads captured" />
+        <div className={styles.stats}>
+          <Stat href="/admin/leads" value={leadTotal} label="Leads captured" icon={ICON.inbox} />
           <Stat
             href="/admin/leads?status=new"
             value={untouched}
             label="Awaiting a first response"
-            tone={untouched > 0 ? 'warn' : undefined}
+            icon={ICON.clock}
+            delta={untouched > 0 ? { text: 'Needs attention', tone: 'needs' } : undefined}
           />
-          <Stat href="/admin/quizzes" value={quizzes} label="Fit finder submissions" />
+          <Stat
+            href="/admin/quizzes"
+            value={quizzes}
+            label="Fit finder submissions"
+            icon={ICON.check}
+            note={`${completed} completed`}
+          />
           <Stat
             href="/admin/quizzes?only=anonymous"
             value={anonymous}
             label="Quizzes with no contact details"
-            note={anonymous > 0 ? 'Interest with nobody to reply to' : undefined}
+            icon={ICON.ghost}
+            note={anonymous > 0 ? 'Interest with nobody to reply to' : 'Everyone left details'}
           />
         </div>
 
@@ -165,19 +173,30 @@ export default async function DashboardPage() {
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
-                  <tr><th>Received</th><th>Name</th><th>Email</th><th>Source</th><th>Status</th></tr>
+                  <tr><th>Lead</th><th>Source</th><th>Status</th></tr>
                 </thead>
                 <tbody>
                   {recentLeads.map((l) => (
                     <tr key={l.id}>
-                      <td className={`${styles.mono} ${styles.nowrap}`}>{formatDate(l.createdAt)}</td>
+                      {/* Two lines per cell, the prototype's dominant table
+                          pattern: the identifying value in weight, its
+                          qualifier under it in small grey. */}
                       <td>
                         <Link className={styles.rowLink} href={`/admin/leads/${l.id}`}>
-                          {l.name ?? <span className={styles.none}>No name</span>}
+                          <span className={styles.cellPrimary}>
+                            {l.name ?? 'No name given'}
+                          </span>
                         </Link>
+                        <span className={`${styles.cellSecondary} ${styles.mono}`}>{l.email}</span>
                       </td>
-                      <td className={styles.mono}>{l.email}</td>
-                      <td className={styles.nowrap}>{SOURCE_LABELS[l.source] ?? l.source}</td>
+                      <td className={styles.nowrap}>
+                        <span className={styles.cellPrimary}>
+                          {SOURCE_LABELS[l.source] ?? l.source}
+                        </span>
+                        <span className={`${styles.cellSecondary} ${styles.mono}`}>
+                          {formatDate(l.createdAt)}
+                        </span>
+                      </td>
                       <td>
                         <span className={`${styles.pill} ${styles[`s_${l.status}`]}`}>{l.status}</span>
                       </td>
@@ -193,21 +212,67 @@ export default async function DashboardPage() {
   );
 }
 
-function Stat({ href, value, label, note, tone }: {
+/**
+ * Stat card, in the prototype's anatomy: icon tile top-left, optional delta
+ * pill top-right, then label, then value. Label before value is the part worth
+ * keeping — it reads as "what is this / how many" rather than a number in
+ * search of a caption.
+ */
+function Stat({ href, value, label, icon, note, delta }: {
   href: string;
   value: number;
   label: string;
+  icon: React.ReactNode;
   note?: string;
-  tone?: 'warn';
+  delta?: { text: string; tone: 'up' | 'needs' };
 }) {
   return (
-    <Link className={`${styles.stat} ${tone === 'warn' ? styles.statWarn : ''}`} href={href}>
-      <span className={styles.statNum}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
-      {note && <span className={styles.statNote}>{note}</span>}
+    <Link className={styles.statCard} href={href}>
+      <div className={styles.statTop}>
+        <span className={styles.statIco}>{icon}</span>
+        {delta && (
+          <span
+            className={`${styles.statDelta} ${delta.tone === 'up' ? styles.deltaUp : styles.deltaNeeds}`}
+          >
+            {delta.text}
+          </span>
+        )}
+      </div>
+      <div className={styles.statLabel}>{label}</div>
+      <div className={styles.statValue}>{value}</div>
+      {note && <div className={styles.statNote}>{note}</div>}
     </Link>
   );
 }
+
+/* Stroke-only 24px icons, matching the sidebar's set. Declared once here
+   rather than inline so the four cards cannot drift apart in weight. */
+const ICON = {
+  inbox: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 12h5l2 3h4l2-3h5" />
+      <path d="M4 5h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
+    </svg>
+  ),
+  clock: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5V12l3.2 1.9" />
+    </svg>
+  ),
+  check: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 11l3 3 7-7" />
+      <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" />
+    </svg>
+  ),
+  ghost: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3a7 7 0 0 0-7 7v10l3-2 2 2 2-2 2 2 3-2V10a7 7 0 0 0-5-6.7" />
+      <path d="M9.5 10h.01M14.5 10h.01" />
+    </svg>
+  ),
+};
 
 function Topbar({ subtitle }: { subtitle: string }) {
   return (
