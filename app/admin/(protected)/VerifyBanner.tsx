@@ -12,10 +12,23 @@ import styles from '../admin.module.css';
  * requireUser(), and it should only go in after a real sign-in email has been
  * seen to arrive in production.
  *
- * It does grow more insistent after a day, so it cannot be ignored forever
- * without noticing.
+ * It does grow more insistent after a week, so it cannot be ignored forever
+ * without anyone noticing.
  */
-const LOUD_AFTER_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * A week's grace before the banner turns insistent.
+ *
+ * It was a day, which was the wrong number for the situation it actually
+ * describes: verification needs working email, and email is the thing that has
+ * not worked in this deployment yet. A red banner on day two blames the person
+ * for something they cannot fix, and a warning that appears when nothing can be
+ * done about it is a warning people learn to scroll past — which then costs
+ * nothing when it fires for a real reason.
+ *
+ * It still never blocks. Only the tone changes.
+ */
+const LOUD_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
 
 export default function VerifyBanner({ user }: { user: AdminUser }) {
   if (user.emailVerified) return null;
@@ -33,7 +46,7 @@ export default function VerifyBanner({ user }: { user: AdminUser }) {
         </strong>
         <span>
           {loud
-            ? `This account has been unverified for more than a day. Nothing is blocked, but
+            ? `This account has been unverified for more than a week. Nothing is blocked, but
                an unverified address cannot receive a sign-in code — which is the only way
                back in if the password is ever lost.`
             : `We will email you a code. Entering it confirms the address can actually
