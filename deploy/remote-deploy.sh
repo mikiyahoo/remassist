@@ -105,6 +105,37 @@ set -a
 . "$SHARED/.env"
 set +a
 
+# ── Migrate and seed, BEFORE the build ─────────────────────────────────────
+# This has to precede `next build`, not follow it. /faq, /reviews and
+# /blog/[slug] read these tables while prerendering — generateStaticParams
+# queries `posts` — so building against an unmigrated database fails with
+# `relation "posts" does not exist`. It did exactly that once; the build step
+# aborts before the symlink swap, so the live site stayed on the previous
+# release, which is the one thing that went right about it.
+#
+# The order this creates is worth being explicit about: the schema is changed
+# while the OLD code is still serving. That is safe only because every
+# migration here is additive — new tables, new nullable or defaulted columns —
+# so code that predates them ignores them. A migration that drops or narrows
+# anything would break the running release the moment it applied, and would
+# need the change split into an expand step and a later contract step instead.
+#
+# The seed runs here too, for the same reason and one more: a build that
+# prerenders /faq against empty tables produces pages with no content and
+# reports success.
+if [ -n "${DATABASE_URL:-}" ]; then
+  log "drizzle-kit migrate"
+  npx drizzle-kit migrate
+
+  # Safe on every deploy by construction, not by care: db/seed-content.mjs is
+  # insert-only and matches on natural keys, so it adds what is missing and
+  # cannot overwrite anything edited in the admin.
+  log "content seed"
+  node db/seed-content.mjs
+else
+  warn "DATABASE_URL unset — skipping migrations and content seed"
+fi
+
 log "next build"
 npm run build
 
@@ -133,29 +164,6 @@ ln -sfn "$SHARED/isr-cache" "$RELEASE/.next/standalone/.next/cache"
 # The root build cache is dead weight once the bundle is packaged — a fresh
 # release directory gets no incremental benefit from it.
 rm -rf "$RELEASE/.next/cache"
-
-# ── Migrate, before the swap ────────────────────────────────────────────────
-if [ -n "${DATABASE_URL:-}" ]; then
-  log "drizzle-kit migrate"
-  npx drizzle-kit migrate
-
-  # ── Content seed, before the swap ─────────────────────────────────────────
-  # /faq, /reviews and /blog read these tables now. Migrations create them
-  # empty, so between a migration and a seed there is a window where the new
-  # code serves three pages with no content — and the seed fallback does not
-  # cover it, because a box with DATABASE_URL set queries rather than falling
-  # back. Running it here closes the window: it is inside the same
-  # before-the-swap phase as the migration, so the old release keeps serving
-  # until both have succeeded.
-  #
-  # Safe to run on every deploy by construction. db/seed-content.mjs is
-  # insert-only and matches on natural keys, so it adds what is missing and
-  # cannot overwrite anything edited in the admin.
-  log "content seed"
-  node db/seed-content.mjs
-else
-  warn "DATABASE_URL unset — skipping migrations and content seed"
-fi
 
 # ── Swap and restart ────────────────────────────────────────────────────────
 # `current` points at the standalone bundle, not the release root: the systemd
