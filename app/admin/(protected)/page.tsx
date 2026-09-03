@@ -3,7 +3,9 @@ import { count, desc, sql } from 'drizzle-orm';
 import { getDb, isDatabaseConfigured } from '@/db';
 import { leads, quizSubmissions } from '@/db/schema';
 import { requireUser } from '@/lib/auth/require';
-import { LEAD_STATUSES, SOURCE_LABELS, formatDate } from '@/lib/leads/display';
+import { LEAD_STATUSES, formatDate } from '@/lib/leads/display';
+import { agentTiers, faqItems, posts, reviews } from '@/db/schema';
+import { AtAGlance, LeadVolume, SourceTag, TopSources } from './DashboardPanels';
 import styles from '../admin.module.css';
 
 /**
@@ -50,7 +52,8 @@ export default async function DashboardPage() {
 
   const db = getDb();
 
-  const [byStatus, totals, quizTotals, recentLeads] = await Promise.all([
+  const [byStatus, totals, quizTotals, recentLeads, bySource, byDay, faqCounts,
+    reviewCounts, postCounts, tierCounts] = await Promise.all([
     db
       .select({ status: leads.status, n: count() })
       .from(leads)
@@ -77,6 +80,37 @@ export default async function DashboardPage() {
       .from(leads)
       .orderBy(desc(leads.createdAt))
       .limit(RECENT),
+    db.select({ source: leads.source, n: count() }).from(leads).groupBy(leads.source),
+    /* Every lead of the last 14 days, bucketed by day in SQL rather than in
+       JS: the database already knows how to do this and the alternative is
+       pulling rows only to count them. */
+    db
+      .select({
+        day: sql<string>`to_char(${leads.createdAt} at time zone 'UTC', 'YYYY-MM-DD')`,
+        n: count(),
+      })
+      .from(leads)
+      .where(sql`${leads.createdAt} >= now() - interval '14 days'`)
+      .groupBy(sql`1`),
+    db
+      .select({
+        faqLive: sql<number>`count(*) filter (where ${faqItems.published})`,
+        faqTotal: count(),
+      })
+      .from(faqItems),
+    db
+      .select({ n: sql<number>`count(*) filter (where ${reviews.published})` })
+      .from(reviews),
+    db
+      .select({
+        live: sql<number>`count(*) filter (where ${posts.published})`,
+        total: count(),
+      })
+      .from(posts),
+    /* The rate catalog drives every quoted estimate, so "is it populated" is
+       worth stating rather than assuming. Counting one of its three tables is
+       enough: db:seed fills them together or not at all. */
+    db.select({ n: count() }).from(agentTiers),
   ]);
 
   const statusCount = new Map(byStatus.map((r) => [r.status, Number(r.n)]));
@@ -85,6 +119,26 @@ export default async function DashboardPage() {
   const anonymous = Number(quizTotals[0]?.anonymous ?? 0);
   const completed = Number(quizTotals[0]?.completed ?? 0);
   const untouched = statusCount.get('new') ?? 0;
+
+  const sourceRows = bySource
+    .map((r) => ({ source: r.source, n: Number(r.n) }))
+    .sort((a, b) => b.n - a.n);
+
+  /* Fourteen buckets built here rather than in SQL, because a day with no
+     leads produces no row and the chart needs the gap to exist. */
+  const perDay = new Map(byDay.map((r) => [r.day, Number(r.n)]));
+  const today = new Date();
+  const days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(Date.UTC(
+      today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - (13 - i),
+    ));
+    const key = d.toISOString().slice(0, 10);
+    return {
+      label: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }),
+      n: perDay.get(key) ?? 0,
+      today: i === 13,
+    };
+  });
 
   return (
     <>
@@ -157,12 +211,14 @@ export default async function DashboardPage() {
           </div>
         </section>
 
+        <div className={styles.grid2}>
         <section className={styles.panel}>
           <div className={styles.panelHead}>
-            <h2 className={styles.panelTitle}>Latest arrivals</h2>
-            <Link className={`${styles.btn} ${styles.btnGhost}`} href="/admin/leads">
-              All leads
-            </Link>
+            <div>
+              <h2 className={styles.panelTitle}>Recent leads</h2>
+              <p className={styles.panelSub}>Newest submissions across the site</p>
+            </div>
+            <Link className={styles.panelLink} href="/admin/leads">View all →</Link>
           </div>
           {recentLeads.length === 0 ? (
             <p className={styles.empty}>
@@ -190,9 +246,7 @@ export default async function DashboardPage() {
                         <span className={`${styles.cellSecondary} ${styles.mono}`}>{l.email}</span>
                       </td>
                       <td className={styles.nowrap}>
-                        <span className={styles.cellPrimary}>
-                          {SOURCE_LABELS[l.source] ?? l.source}
-                        </span>
+                        <SourceTag source={l.source} />
                         <span className={`${styles.cellSecondary} ${styles.mono}`}>
                           {formatDate(l.createdAt)}
                         </span>
@@ -207,6 +261,26 @@ export default async function DashboardPage() {
             </div>
           )}
         </section>
+
+        <AtAGlance
+          counts={{
+            faqLive: Number(faqCounts[0]?.faqLive ?? 0),
+            faqTotal: Number(faqCounts[0]?.faqTotal ?? 0),
+            reviewsLive: Number(reviewCounts[0]?.n ?? 0),
+            postsLive: Number(postCounts[0]?.live ?? 0),
+            postsTotal: Number(postCounts[0]?.total ?? 0),
+            quizzes,
+            anonymous,
+            catalogEmpty: Number(tierCounts[0]?.n ?? 0) === 0,
+            mailConfigured: Boolean(process.env.AUTH_RESEND_KEY),
+          }}
+        />
+        </div>
+
+        <div className={styles.grid2eq}>
+          <LeadVolume days={days} />
+          <TopSources rows={sourceRows} total={leadTotal} />
+        </div>
       </div>
     </>
   );

@@ -36,6 +36,7 @@
      here under different names; these are the additions its stat cards, icon
      buttons and status palette reference. */
   --ink-400: #667180;
+  --ink-600: #667180;
   --ink-50: #f5f7fa;
   --low-50: #ecfaf1;
   --low-700: #0f5c2d;
@@ -1025,3 +1026,136 @@
 
 @media (max-width: 1180px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+
+/* ---------- dashboard layout, from the prototype ---------- */
+
+/* Asymmetric on purpose: the table needs the room, the rail is a summary.
+   1.9fr / 1fr are the prototype's own numbers. */
+.grid2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.grid2eq { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* "At a glance" — stacked sections divided by hairlines rather than separate
+   panels, so the rail reads as one object beside the table. */
+.glanceSection { padding: 16px 22px; }
+.glanceSection + .glanceSection { border-top: 1px solid var(--hairline); }
+.glanceLabel {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+  margin-bottom: 8px;
+}
+.glanceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  font-size: 13px;
+  color: var(--ink-500);
+  text-decoration: none;
+}
+.glanceRow b { font-weight: 700; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+a.glanceRow:hover b { color: var(--blue-700); }
+a.glanceRow:hover { color: var(--blue-700); }
+
+.statusRow { display: flex; gap: 10px; align-items: flex-start; padding: 5px 0; }
+.statusRow span { font-size: 13px; color: var(--ink-500); line-height: 1.45; }
+.statusDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #12b76a;
+  margin-top: 5px;
+  flex: none;
+  box-shadow: 0 0 0 3px var(--low-50);
+}
+.statusDotWarn { background: #d97706; box-shadow: 0 0 0 3px var(--high-50); }
+
+/* A source, named beside a tinted glyph rather than as bare text. */
+.srcTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-600);
+  white-space: nowrap;
+}
+.sourceChip {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  flex: none;
+  background: var(--ink-50);
+  color: var(--ink-500);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sourceChip svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.panelLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-blue);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.panelLink:hover { color: var(--blue-700); }
+.panelSub { margin: 3px 0 0; font-size: 12.5px; color: var(--ink-500); }
+
+/* Lead volume. One column per day, bars sized against the busiest day so the
+   shape is readable even when the numbers are small. */
+.chart { display: flex; align-items: flex-end; gap: 8px; height: 200px; padding: 22px 24px 0; }
+.chartCol {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.chartBar {
+  width: 100%;
+  max-width: 34px;
+  border-radius: 8px 8px 3px 3px;
+  background: rgba(81, 141, 224, 0.28);
+  transition: background 150ms;
+}
+.chartCol:hover .chartBar { background: var(--brand-blue); }
+.chartToday .chartBar { background: var(--navy-900); }
+.cday { font-size: 10.5px; color: var(--ink-400); white-space: nowrap; }
+.chartToday .cday { color: var(--ink-900); font-weight: 700; }
+
+/* Top sources. */
+.sources { padding: 18px 22px 22px; display: flex; flex-direction: column; gap: 16px; }
+.srcLabel { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 6px; }
+.srcLabel b { font-weight: 700; color: var(--ink-900); }
+.srcLabel span { color: var(--ink-500); font-size: 12.5px; }
+.srcTrack { height: 8px; border-radius: 999px; background: var(--ink-50); overflow: hidden; }
+.srcFill { height: 100%; border-radius: 999px; background: var(--brand-blue); }
+.srcFillA { background: var(--blue-300); }
+.srcFillB { background: #8fc6f2; }
+.srcFillC { background: #c3dcf7; }
+
+@media (max-width: 1180px) {
+  .grid2, .grid2eq { grid-template-columns: 1fr; }
+}
