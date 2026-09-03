@@ -127,13 +127,21 @@ if [ -n "${DATABASE_URL:-}" ]; then
   log "drizzle-kit migrate"
   npx drizzle-kit migrate
 
-  # Safe on every deploy by construction, not by care: db/seed-content.mjs is
-  # insert-only and matches on natural keys, so it adds what is missing and
+  # Safe on every deploy by construction, not by care: both seeds are
+  # insert-only and match on natural keys, so they add what is missing and
   # cannot overwrite anything edited in the admin.
   log "content seed"
   node db/seed-content.mjs
+
+  # The rate tables were never seeded on the server, which is why the Rates
+  # screen read as empty there while the local database had figures in it. The
+  # quote calculator does not read these yet — §6.3 — but the admin does, and
+  # an empty price list on the box that serves the site is indistinguishable
+  # from a broken one.
+  log "rate seed"
+  node db/seed-rates.mjs
 else
-  warn "DATABASE_URL unset — skipping migrations and content seed"
+  warn "DATABASE_URL unset — skipping migrations and seeds"
 fi
 
 log "next build"

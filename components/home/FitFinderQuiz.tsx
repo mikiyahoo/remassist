@@ -49,6 +49,11 @@ export default function FitFinderQuiz() {
     const el = ref.current;
     if (!el) return;
 
+    /* Hoisted out of both branches below. The cleanup returned at the end of
+       this effect calls cancelIdleCallback, and a declaration inside either
+       branch is not in scope there. */
+    const w = window as IdleWindow;
+
     let io: IntersectionObserver | undefined;
     let idleId: number | undefined;
     let timeoutId: number | undefined;
@@ -56,7 +61,6 @@ export default function FitFinderQuiz() {
     const load = () => {
       setShow(true);
       io?.disconnect();
-      const w = window as IdleWindow;
       if (idleId !== undefined) w.cancelIdleCallback?.(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
@@ -67,19 +71,20 @@ export default function FitFinderQuiz() {
         { rootMargin: '600px' },
       );
       io.observe(el);
+    } else {
+      /* The backstop, and only for browsers with no IntersectionObserver.
+         It used to run unconditionally, which meant QuizLogic was fetched and
+         evaluated on every home page visit within 2.5s whether or not anyone
+         scrolled — the observer above already loads it 600px early, so the
+         timer was not buying reach, only guaranteed work. requestIdleCallback
+         where it exists (not Safari before 17.4), a plain timer otherwise. */
+      if (w.requestIdleCallback) idleId = w.requestIdleCallback(load, { timeout: IDLE_TIMEOUT_MS });
+      else timeoutId = window.setTimeout(load, IDLE_TIMEOUT_MS);
     }
-
-    /* The backstop. requestIdleCallback where it exists (not Safari before
-       17.4), a plain timer everywhere else — either way the quiz is on the
-       page well before anyone can scroll to it, without competing with the
-       hero for the network. */
-    const w = window as IdleWindow;
-    if (w.requestIdleCallback) idleId = w.requestIdleCallback(load, { timeout: IDLE_TIMEOUT_MS });
-    else timeoutId = window.setTimeout(load, IDLE_TIMEOUT_MS);
 
     return () => {
       io?.disconnect();
-      if (idleId !== undefined) w.cancelIdleCallback?.(idleId);
+      if (idleId !== undefined) (window as IdleWindow).cancelIdleCallback?.(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);

@@ -76,7 +76,7 @@ export default function AdminNav({ showTeam }: { showTeam: boolean }) {
             <circle cx="14" cy="12" r="1.6" />
             <circle cx="10" cy="18" r="1.6" />
           </svg>
-          <span>Rate catalog</span>
+          <span>Rates</span>
         </Link>
       </div>
 

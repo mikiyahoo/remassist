@@ -48,7 +48,7 @@ export default function Header() {
         <nav className={styles['nav-row']} aria-label="Main">
           {/* Services */}
           <span className={styles['nav-has-menu']}>
-            <Link className={styles['nav-link']} href="/services">
+            <Link className={styles['nav-link']} href="/services" prefetch={false}>
               Services
               <svg className={styles['nav-caret']} viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </Link>
@@ -109,7 +109,7 @@ export default function Header() {
             </span>
           </span>
           <span className={styles['nav-has-menu']}>
-            <Link className={styles['nav-link']} href="/faq">
+            <Link className={styles['nav-link']} href="/faq" prefetch={false}>
               Resources
               <svg className={styles['nav-caret']} viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </Link>
@@ -122,7 +122,7 @@ export default function Header() {
                   </span>
                   <Link className={styles['nav-item']} href="/reviews" prefetch={false}>
                     <span className={styles['nav-ico']}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.8 6.4.7-4.8 4.3 1.3 6.2L12 17l-5.5 3 1.3-6.2L3 9.5l6.4-.7z" /></svg></span>
-                    <span><b>Reviews</b><small>Live reviews on Trustpilot</small></span>
+                    <span><b>Reviews</b><small>Live reviews on Trustpilot and Google</small></span>
                   </Link>
                 </span>
                 <span className={styles['nav-box']}>
@@ -149,9 +149,9 @@ export default function Header() {
             </span>
           </span>
 
-          <Link className={`${styles['nav-link']} ${styles['nav-secondary']}`} href="/how-it-works">How it Works</Link>
-          <Link className={styles['nav-link']} href="/pricing">Pricing</Link>
-          <Link className={`${styles['nav-link']} ${styles['nav-secondary']}`} href="/qualify">Qualify</Link>
+          <Link className={`${styles['nav-link']} ${styles['nav-secondary']}`} href="/how-it-works" prefetch={false}>How it Works</Link>
+          <Link className={styles['nav-link']} href="/pricing" prefetch={false}>Pricing</Link>
+          <Link className={`${styles['nav-link']} ${styles['nav-secondary']}`} href="/qualify" prefetch={false}>Qualify</Link>
           <a className={styles['nav-cta']} data-book-placement="header" href="https://calendly.com/j-zemene-remassistance/new-meeting" target="_blank" rel="noopener">Book a Call</a>
         </nav>
 

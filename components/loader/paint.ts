@@ -263,6 +263,13 @@ export function createPainter(canvas: HTMLCanvasElement): LoaderPainter | null {
     c.strokeStyle = piece.color;
 
     const n = piece.dist.length;
+    /* `dist` is a uniform ramp — samplePaths fills it with
+       `perimeter * i / (count - 1)` — so the samples inside a band's arc-length
+       window are a contiguous index range that can be computed directly. This
+       used to scan all `n` points for each of the 20 bands (up to 33,600
+       iterations per frame across the four ribbons) to find the ~5 that fall in
+       each window. Same points, same order, same output. */
+    const perIndex = piece.perimeter / (n - 1);
     for (let band = 0; band < TAIL_BANDS; band++) {
       /* Band 0 is at the head (alpha 1), the last band is at the tail's end. */
       const near = head - (tail * band) / TAIL_BANDS;
@@ -270,24 +277,17 @@ export function createPainter(canvas: HTMLCanvasElement): LoaderPainter | null {
       const alpha = (1 - band / TAIL_BANDS) * opacity;
       if (alpha <= 0.002) continue;
 
+      /* `far <= d <= near`, with one extra segment of overlap at each end so
+         consecutive bands join instead of leaving hairline gaps. */
+      const from = Math.max(0, Math.ceil((far - 1) / perIndex));
+      const to = Math.min(n - 1, Math.floor((near + 1) / perIndex));
+      if (to <= from) continue;
+
       c.globalAlpha = alpha;
       c.beginPath();
-      let drawing = false;
-      for (let i = 0; i < n; i++) {
-        const d = piece.dist[i];
-        /* `far <= d <= near`, with one extra segment of overlap at each end so
-           consecutive bands join instead of leaving hairline gaps. */
-        if (d < far - 1 || d > near + 1) {
-          drawing = false;
-          continue;
-        }
-        const x = piece.pts[i * 2];
-        const y = piece.pts[i * 2 + 1];
-        if (drawing) c.lineTo(x, y);
-        else {
-          c.moveTo(x, y);
-          drawing = true;
-        }
+      c.moveTo(piece.pts[from * 2], piece.pts[from * 2 + 1]);
+      for (let i = from + 1; i <= to; i++) {
+        c.lineTo(piece.pts[i * 2], piece.pts[i * 2 + 1]);
       }
       c.stroke();
     }

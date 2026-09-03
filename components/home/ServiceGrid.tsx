@@ -115,11 +115,11 @@ export default function ServiceGrid() {
               your goals within reach.
             </p>
             <div style={{ display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
-              <Link href="/services" className={styles.cta}>
+              <Link href="/services" className={styles.cta} prefetch={false}>
                 More services
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
               </Link>
-              <Link href="/pricing" className={styles.cta}
+              <Link href="/pricing" className={styles.cta} prefetch={false}
                 style={{ background: '#fff', color: 'var(--brand-blue)', border: '1px solid rgba(81,141,224,0.45)' }}>
                 See pricing
               </Link>
@@ -129,7 +129,7 @@ export default function ServiceGrid() {
 
         <div className={styles.teamList}>
           {SERVICES.map((s) => (
-            <Link key={s.num} href={s.href} className={styles.teamCard}>
+            <Link key={s.num} href={s.href} className={styles.teamCard} prefetch={false}>
               <span className={styles.teamTile}><svg viewBox="0 0 24 24" aria-hidden="true">{s.icon}</svg></span>
               <span className={styles.teamRail} />
               <span className={styles.teamNum}>{s.num}</span>

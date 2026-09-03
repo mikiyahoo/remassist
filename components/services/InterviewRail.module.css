@@ -131,17 +131,17 @@
      now, on the card's own navy, so there is nothing to wash out. */
   .scrim { display: none; }
 
-  .meta { position: static; flex: 1 1 auto; min-width: 0; padding: 0 16px;
+  .meta { position: static; flex: 1 1 auto; min-width: 0; padding: 0 60px 0 16px;
     display: flex; flex-direction: column; justify-content: center; }
   .name { font-size: 15px; }
   .position { font-size: 11.5px; margin-top: 4px; }
   .length { margin-top: 7px; }
 
-  /* Centred on the poster tile rather than tucked into the card's corner. */
-  .disc { left: 34px; top: 50%; right: auto; bottom: auto;
-    width: 40px; height: 40px; transform: translateY(-50%); }
-  .card:hover .disc, .trigger:focus-visible + .disc {
-    transform: translateY(-50%) scale(1.08); }
+  /* Tucked into the row's bottom-right corner, as on the desktop card.
+     Centred on the 108px poster tile it sat squarely over the face. */
+  .disc { right: 14px; bottom: 14px; left: auto; top: auto;
+    width: 38px; height: 38px; }
+  .card:hover .disc, .trigger:focus-visible + .disc { transform: scale(1.08); }
 
   /* Playing: the row opens into the portrait frame the clip was shot in.
      A 116px-tall strip is not a video player. */

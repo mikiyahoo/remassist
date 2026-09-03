@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
+import BlogRail from '@/components/services/BlogRail';
 
 export const metadata: Metadata = {
   title: 'Marketing & Content',
@@ -325,25 +327,16 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/marketing-and-content' surface='white' />
+  <BlogRail
+      surface="paper"
+      eyebrow="From the blog"
+      title={<>Reading for whoever <span>owns the output.</span></>}
+      lede="Playbooks on scoping the pod, ramping it, and keeping the pipeline honest — written by the people who source and manage these marketers."
+    />
 
-  <section className={styles['mc-close']}>
-      <div className={styles['mc-wrap']}>
-        <h2>Tell us how you sell. We will scope the pod on the call.</h2>
-        <p>Bring your motion, your targets and the thing that is currently stuck. You get a proposed seat
-          mix, a timeline and a price — and the trial is free before any of it is signed.</p>
-        <div className={styles['mc-cta-row']}>
-          <a className={`${styles['mc-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Scope your pod, free
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['mc-btn']} ${styles['mc-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ServiceJsonLd path='/services/marketing-and-content' />
+
+  <ContactRail />
     </main>
   );
 }

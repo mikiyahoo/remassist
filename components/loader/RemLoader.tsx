@@ -121,6 +121,11 @@ export default function RemLoader() {
     if (!overlay) return;
 
     let frame = 0;
+    /* Declared with `frame` rather than at its point of use: `finish()` cancels
+       it, and finish() is called on the already-seen / reduced-motion path
+       above the painter setup. A `let` further down would be in its temporal
+       dead zone at that point and throw. */
+    let setupFrame = 0;
     let timer: ReturnType<typeof setInterval> | undefined;
     let painter: LoaderPainter | null = null;
     let done = false;
@@ -129,6 +134,7 @@ export default function RemLoader() {
       if (done) return;
       done = true;
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(setupFrame);
       if (timer !== undefined) {
         clearInterval(timer);
         timer = undefined;
@@ -190,13 +196,29 @@ export default function RemLoader() {
     /* The reduced-motion and frugal-connection paths returned above, so the
        only reason to fall back to the static mark now is that the canvas
        itself is unavailable — an old browser, a blocked 2D context, or a
-       throw out of the sampling. Better that than an empty navy screen. */
-    try {
-      painter = canvasRef.current ? createPainter(canvasRef.current) : null;
-    } catch {
-      painter = null;
-    }
-    if (!painter) imgRef.current?.classList.remove(styles.fallbackHidden);
+       throw out of the sampling. Better that than an empty navy screen.
+
+       Deferred by two frames rather than run here. createPainter -> samplePaths
+       does up to 1,680 synchronous getPointAtLength() calls against a
+       document-attached SVG, and this effect runs inside hydration — so that
+       burst of forced layout lands squarely on top of React's own work on the
+       one route where time to first paint is the whole point. One rAF gets past
+       the current frame, the second past the paint that follows it. The overlay
+       is server-rendered and the progress bar rides a timer (see below), so the
+       opening beat still reads correctly for the two frames before the mark
+       starts drawing. */
+    const setUpPainter = () => {
+      if (done) return;
+      try {
+        painter = canvasRef.current ? createPainter(canvasRef.current) : null;
+      } catch {
+        painter = null;
+      }
+      if (!painter) imgRef.current?.classList.remove(styles.fallbackHidden);
+    };
+    setupFrame = requestAnimationFrame(() => {
+      setupFrame = requestAnimationFrame(setUpPainter);
+    });
 
     const onResize = () => painter?.resize();
     window.addEventListener('resize', onResize);
@@ -255,6 +277,7 @@ export default function RemLoader() {
 
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(setupFrame);
       if (timer !== undefined) clearInterval(timer);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('readystatechange', onReadyStateChange);

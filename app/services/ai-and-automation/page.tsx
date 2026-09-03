@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
+import BlogRail from '@/components/services/BlogRail';
 
 export const metadata: Metadata = {
   title: 'AI & Automation',
@@ -467,25 +469,16 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/ai-and-automation' surface='white' />
+  <BlogRail
+      surface="paper"
+      eyebrow="From the blog"
+      title={<>Reading for whoever <span>owns the threshold.</span></>}
+      lede="Playbooks on scoping the workflow, ramping it, and keeping the automated half honest — written by the people who source and manage these teams."
+    />
 
-  <section className={styles['ai-close']}>
-      <div className={styles['ai-wrap']}>
-        <h2>Name the workflow. We will map it for free.</h2>
-        <p>One workflow followed end to end, and a written map of where the time goes and which steps should
-          never be automated. You keep the map either way.</p>
-        <div className={styles['ai-cta-row']}>
-          <a className={`${styles['ai-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Map one workflow, free
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['ai-btn']} ${styles['ai-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ServiceJsonLd path='/services/ai-and-automation' />
+
+  <ContactRail />
     </main>
   );
 }

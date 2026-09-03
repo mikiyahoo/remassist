@@ -32,7 +32,7 @@ export const SERVICE_LINKS: NavLink[] = [
 /** The "Resources" mega panel. Case Studies is deliberately absent — the
  *  header marks it "coming soon" rather than linking it. */
 export const RESOURCE_LINKS: NavLink[] = [
-  { href: '/reviews', label: 'Reviews', blurb: 'Live reviews on Trustpilot' },
+  { href: '/reviews', label: 'Reviews', blurb: 'Live reviews on Trustpilot and Google' },
   { href: '/blog', label: 'Blog & Guides', blurb: 'Playbooks on delegation and operations' },
   { href: '/faq', label: 'FAQ', blurb: 'Pricing, onboarding, and data handling' },
 ];

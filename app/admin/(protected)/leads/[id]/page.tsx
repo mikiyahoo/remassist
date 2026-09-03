@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { desc, eq } from 'drizzle-orm';
@@ -100,7 +101,7 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
             {raw && Object.keys(raw).length > 0 ? (
               <dl className={styles.dl}>
                 {Object.entries(raw).map(([k, v]) => (
-                  <Fragment key={k} k={k} v={v} flagged={extraKeys.includes(k)} />
+                  <RawPair key={k} k={k} v={v} flagged={extraKeys.includes(k)} />
                 ))}
               </dl>
             ) : (
@@ -144,13 +145,13 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
                 {orderedAnswers(q.answers).map(([key, value]) => {
                   const a = answerFor(key, value);
                   return (
-                    <div key={key}>
+                    <Fragment key={key}>
                       <dt>{questionFor(key) ?? key}</dt>
                       <dd>
                         {a.label}
                         {a.note && <span className={styles.answerNote}> — {a.note}</span>}
                       </dd>
-                    </div>
+                    </Fragment>
                   );
                 })}
               </dl>
@@ -206,7 +207,7 @@ function Row({
 }
 
 /** A raw key/value, flagged when no named row above already covers it. */
-function Fragment({ k, v, flagged }: { k: string; v: string; flagged: boolean }) {
+function RawPair({ k, v, flagged }: { k: string; v: string; flagged: boolean }) {
   return (
     <>
       <dt className={styles.mono}>

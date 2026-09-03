@@ -227,18 +227,6 @@
   .sr-faq details[open] summary::after { content: "\2212"; background: var(--brand-blue); color: #fff; }
   .sr-faq p { margin: 0 4px 24px; font-size: 15px; line-height: 1.75; color: var(--ink-600); max-width: 78ch; }
 
-  /* ---------- closing cta ---------- */
-  .sr-close { background: var(--brand-navy); padding: 84px 0; text-align: center; }
-  .sr-close h2 { margin: 0 auto; max-width: 24ch; font-family: var(--font-display);
-    font-size: clamp(28px, 3.2vw, 42px); font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.14; }
-  .sr-close p { margin: 16px auto 0; max-width: 56ch; font-size: 16.5px; line-height: 1.7;
-    color: rgba(255, 255, 255, 0.78); }
-  .sr-close-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
-  .sr-close-ghost { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 8px; padding: 13px 26px;
-    font-size: 16px; font-weight: 600; text-decoration: none; transition: background 150ms, border-color 150ms; }
-  .sr-close-ghost:hover { background: rgba(255, 255, 255, 0.10); border-color: #fff; color: #fff; }
-
   @media (max-width: 1024px) {
     .sr-hero { grid-template-columns: 1fr; gap: 46px; padding: 54px 0 62px; }
     .sr-grid, .sr-chan { grid-template-columns: repeat(2, minmax(0, 1fr)); }

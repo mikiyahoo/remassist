@@ -258,13 +258,6 @@
   .it-faq details[open] summary::after { content: "\2212"; background: var(--brand-blue); color: #fff; }
   .it-faq p { margin: 0 4px 24px; font-size: 15px; line-height: 1.75; color: var(--ink-600); max-width: 78ch; }
 
-  /* ---------- navy centred close ---------- */
-  .it-close { background: var(--brand-navy); padding: 84px 0; text-align: center; }
-  .it-close h2 { margin: 0 auto; max-width: 24ch; font-family: var(--font-display);
-    font-size: clamp(28px, 3.2vw, 42px); font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.14; }
-  .it-close p { margin: 16px auto 0; max-width: 58ch; font-size: 16.5px; line-height: 1.7; color: var(--ink-200); }
-  .it-close .it-cta-row { justify-content: center; }
-
   @media (prefers-reduced-motion: reduce) {
     .it-btn, .it-card, .it-chan-card, .it-tier, .it-step { transition: none; }
     .it-btn:hover, .it-card:hover, .it-chan-card:hover, .it-tier:hover { transform: none; }
@@ -274,7 +267,7 @@
     .it-grid, .it-flowrow, .it-chan { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 760px) {
-    .it-section, .it-band, .it-close { padding: 58px 0; }
+    .it-section, .it-band { padding: 58px 0; }
     .it-grid, .it-flowrow, .it-chan, .it-tiers { grid-template-columns: 1fr; }
     .it-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .it-proof div:nth-child(3) { border-left: 0; }

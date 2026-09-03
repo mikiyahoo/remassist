@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
 import SeatTiersSection from '@/components/services/SeatTiers';
 import InterviewRail from '@/components/services/InterviewRail';
 import { interviewsFor } from '@/lib/interviews';
@@ -283,25 +284,9 @@ export default function Page() {
       lede="Playbooks on scoping the seat, ramping it, and keeping the controls intact — written by the people who source and manage these desks."
     />
 
-  <RelatedServices path='/services/finance-and-accounting' surface='white' />
+  <ServiceJsonLd path='/services/finance-and-accounting' />
 
-  <section className={styles['fn-close']}>
-      <div className={styles['fn-wrap']}>
-        <h2>See a week of your ledger handled first.</h2>
-        <p>The consult is free, the pilot is small on purpose, and you approve every seat before it
-          touches your books.</p>
-        <div className={styles['fn-cta-row']}>
-          <a className={`${styles['fn-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Book a free consult
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['fn-btn']} ${styles['fn-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ContactRail />
     </main>
   );
 }

@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import Image from 'next/image';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
 
 export const metadata: Metadata = {
   title: 'GTM Teams',
@@ -171,18 +172,9 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/gtm-teams' surface='white' />
+  <ServiceJsonLd path='/services/gtm-teams' />
 
-  <section id='book' style={{ background: "var(--brand-navy)" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "80px 24px", textAlign: "center" }}>
-        <h2 style={{ margin: "0 auto 16px", fontFamily: "var(--font-display)", fontSize: "36px", fontWeight: 700, color: "#fff" }}>Scope your pod in one free consult</h2>
-        <p style={{ margin: "0 auto 32px", fontSize: "16px", lineHeight: 1.6, color: "var(--ink-200)", maxWidth: "52ch" }}>Tell us your motion and targets — we’ll propose the seat mix, timeline, and pricing. Free trial included.</p>
-        <a href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener' style={{ display: "inline-block", background: "var(--brand-blue)", color: "#fff", fontSize: "17px", fontWeight: 600, textDecoration: "none", padding: "15px 32px", borderRadius: "6px", transition: "background 150ms" }} className={styles['hv-4']}>Book a Call</a>
-      </div>
-    </section>
-  
-  
-  
+  <ContactRail />
     </main>
   );
 }

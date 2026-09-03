@@ -340,14 +340,6 @@
   .hr-faq details[open] summary::after { content: "\2212"; background: var(--brand-blue); color: #fff; }
   .hr-faq p { margin: 0 4px 24px; font-size: 15px; line-height: 1.75; color: var(--ink-600); max-width: 78ch; }
 
-  /* ---------- navy centred close ---------- */
-  .hr-close { background: var(--brand-navy); padding: 84px 0; text-align: center; }
-  .hr-close h2 { margin: 0 auto; max-width: 24ch; font-family: var(--font-display);
-    font-size: clamp(28px, 3.2vw, 42px); font-weight: 700; letter-spacing: -0.02em; color: #fff;
-    line-height: 1.14; }
-  .hr-close p { margin: 16px auto 0; max-width: 58ch; font-size: 16.5px; line-height: 1.7; color: var(--ink-200); }
-  .hr-close .hr-cta-row { justify-content: center; }
-
   @media (prefers-reduced-motion: reduce) {
     .hr-btn, .hr-card, .hr-tier, .hr-sys, .hr-stage { transition: none; }
     .hr-btn:hover, .hr-card:hover, .hr-tier:hover { transform: none; }
@@ -368,7 +360,7 @@
     .hr-stage-body { grid-template-columns: 1fr; gap: 16px; }
   }
   @media (max-width: 760px) {
-    .hr-section, .hr-band, .hr-close { padding: 58px 0; }
+    .hr-section, .hr-band { padding: 58px 0; }
     .hr-grid, .hr-tiers, .hr-split, .hr-trust { grid-template-columns: 1fr; }
     .hr-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .hr-proof div:nth-child(3) { border-left: 0; padding-left: 0; }

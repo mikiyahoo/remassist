@@ -167,13 +167,6 @@
   .fn-faq details[open] summary::after { content: "\2212"; background: var(--brand-blue); color: #fff; }
   .fn-faq p { margin: 0 4px 24px; font-size: 15px; line-height: 1.75; color: var(--ink-600); max-width: 78ch; }
 
-  /* ---------- navy centred close ---------- */
-  .fn-close { background: var(--brand-navy); padding: 84px 0; text-align: center; }
-  .fn-close h2 { margin: 0 auto; max-width: 24ch; font-family: var(--font-display);
-    font-size: clamp(28px, 3.2vw, 42px); font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.14; }
-  .fn-close p { margin: 16px auto 0; max-width: 56ch; font-size: 16.5px; line-height: 1.7; color: var(--ink-200); }
-  .fn-close .fn-cta-row { justify-content: center; }
-
   @media (prefers-reduced-motion: reduce) {
     .fn-btn, .fn-card, .fn-beat, .fn-tier { transition: none; }
     .fn-btn:hover, .fn-card:hover, .fn-beat:hover, .fn-tier:hover { transform: none; }
@@ -184,7 +177,7 @@
     .fn-art { max-width: 560px; }
   }
   @media (max-width: 760px) {
-    .fn-section, .fn-band, .fn-close { padding: 58px 0; }
+    .fn-section, .fn-band { padding: 58px 0; }
     .fn-grid, .fn-cadence, .fn-tiers, .fn-split { grid-template-columns: 1fr; }
     .fn-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .fn-proof div:nth-child(3) { border-left: 0; padding-left: 0; }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import Image from 'next/image';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
 import ContactRail from '@/components/services/ContactRail';
 import SeatTiersSection from '@/components/services/SeatTiers';
 import InterviewRail from '@/components/services/InterviewRail';
@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   alternates: { canonical: '/services/virtual-back-office-team' },
   openGraph: pageOg('/services/virtual-back-office-team'),
 };
+
+/**
+ * What one tile of the hero photo wall actually paints: 2 columns of the wrap
+ * below 680px, then a 680px-wide wall, then the hero's right column.
+ */
+const TILE_SIZES = '(max-width: 680px) 45vw, (max-width: 1024px) 220px, 180px';
 
 export default function Page() {
   return (
@@ -68,36 +74,44 @@ export default function Page() {
         </div>
   
         
+        {/* The optimiser hands back the bitmap `sizes` asks for, and these were
+            ported carrying the other service pages' 54px avatar-stack figure,
+            so /_next/image handed back a 64px bitmap for a 178px tile, a 2.8x
+            upscale. That was the mush. TILE_SIZES describes the real box.
+
+            The files in /images/Agents are themselves only ~151px square, which
+            is the remaining ceiling: the tile now gets all 151px instead of 64,
+            and re-exporting the nine faces at 512px closes the rest. */}
         <div className={styles['vb-wall']} aria-hidden='true'>
           <div className={styles['vb-col']}>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
           </div>
           <div className={`${styles['vb-col']} ${styles['vb-col--down']} ${styles['vb-col--mid']}`}>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/gtm-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
           </div>
           <div className={`${styles['vb-col']} ${styles['vb-col--slow']}`}>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={128} height={128} sizes="54px" /></div>
-            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={128} height={128} sizes="54px" /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/sdr-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-1.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-2.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
+            <div className={styles['vb-tile']}><Image src='/images/Agents/cs-3.jpg' alt='' width={256} height={256} sizes={TILE_SIZES} /></div>
           </div>
   
           <span className={styles['vb-wall-badge']}>
@@ -243,7 +257,7 @@ export default function Page() {
       lede="Playbooks on scoping the seat, ramping it, and keeping throughput steady — written by the people who source and manage these teams."
     />
 
-  <RelatedServices path='/services/virtual-back-office-team' surface='paper' />
+  <ServiceJsonLd path='/services/virtual-back-office-team' />
 
   <ContactRail />
     </main>

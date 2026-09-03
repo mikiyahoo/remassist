@@ -164,14 +164,6 @@
   .cx-faq details[open] summary::after { content: "\2212"; background: var(--brand-blue); color: #fff; }
   .cx-faq p { margin: 0 4px 24px; font-size: 15px; line-height: 1.75; color: var(--ink-600); max-width: 78ch; }
 
-  /* ---------- navy centred close ---------- */
-  .cx-close { background: var(--brand-navy); padding: 84px 0; text-align: center; }
-  .cx-close h2 { margin: 0 auto; max-width: 24ch; font-family: var(--font-display);
-    font-size: clamp(28px, 3.2vw, 42px); font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.14; }
-  .cx-close p { margin: 16px auto 0; max-width: 56ch; font-size: 16.5px; line-height: 1.7;
-    color: var(--ink-200); }
-  .cx-close .cx-cta-row { justify-content: center; }
-
   @media (prefers-reduced-motion: reduce) {
     .cx-btn, .cx-card, .cx-shift, .cx-tier { transition: none; }
     .cx-btn:hover, .cx-card:hover, .cx-shift:hover, .cx-tier:hover { transform: none; }
@@ -183,7 +175,7 @@
     .cx-art { max-width: 520px; }
   }
   @media (max-width: 760px) {
-    .cx-section, .cx-band, .cx-close { padding: 58px 0; }
+    .cx-section, .cx-band { padding: 58px 0; }
     .cx-grid, .cx-shifts, .cx-tiers { grid-template-columns: 1fr; }
     .cx-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cx-proof div:nth-child(3) { border-left: 0; padding-left: 0; }

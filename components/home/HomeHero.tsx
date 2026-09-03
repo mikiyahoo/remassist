@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import HomeTrustBar from './HomeTrustBar';
 import { track } from '@/lib/analytics/events';
+import { HERO_INTERVIEW, interviewPoster, interviewVideo } from '@/lib/interviews';
 import styles from './HomeHero.module.css';
 
 /**
@@ -16,16 +17,23 @@ import styles from './HomeHero.module.css';
  *   HomeTrustBar → the trust strip is the hero's second flex child in the
  *                  artboard, so hero + strip together fill one viewport.
  *
- * The DCLogic behaviour ported here: autoplay the muted hero video (pausing it
- * when it scrolls out of view), toggle sound, play/pause on click, and reveal a
+ * The DCLogic behaviour ported here: play the muted hero video (pausing it when
+ * it scrolls out of view), toggle sound, play/pause on click, and reveal a
  * chip's tip card on hover while the orbit float freezes. The clip is served
- * locally from /uploads/Interviews/kalkidan.mp4 with an instant poster frame,
- * ensuring zero black screen on load and immediate smooth autoplay.
+ * locally, behind a poster frame, so there is no black screen on load.
+ *
+ * PLAYBACK IS DEFERRED, AND NOT BY `autoPlay`. The <video> ships with
+ * `preload="none"` and no autoplay attribute, so the critical path carries the
+ * 6.7 KB poster and not the 9 MB clip; the IntersectionObserver below calls
+ * play(), and play() is what starts the download. The disc is above the fold,
+ * so that lands a frame or two after first paint — it still reads as autoplay,
+ * it just no longer races the LCP element for bandwidth. Putting `autoPlay
+ * preload="auto"` back is a 9 MB regression on every home page load.
  */
 
 const BOOK = 'https://calendly.com/j-zemene-remassistance/new-meeting';
-const VIDEO = '/uploads/Interviews/kalkidan.mp4';
-const POSTER = '/images/interviews/kalkidan.jpg';
+const VIDEO = interviewVideo(HERO_INTERVIEW);
+const POSTER = interviewPoster(HERO_INTERVIEW);
 
 /* Offsets and delays are the artboard's, relative to the 500x500 orbit box.
    `pop` mirrors the dc-hero-pop--right / --up modifiers: chips near the right
@@ -72,7 +80,7 @@ export default function HomeHero() {
   const [soundOn, setSoundOn] = useState(false);
   const [hover, setHover] = useState(-1);
 
-  /* Autoplay muted on mount with scroll-intersection observer */
+  /* Muted playback, started by the observer instead of by the markup */
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -86,17 +94,27 @@ export default function HomeHero() {
     }).connection;
     const frugal = Boolean(conn?.saveData) || /^(slow-)?2g$/.test(conn?.effectiveType ?? '');
 
+    /* Returning early is now the whole of the opt-out: the element already
+       ships as preload="none", so never calling play() is what keeps the file
+       off the wire. This branch used to set v.preload = 'none' here, which was
+       always too late to matter — the effect runs after hydration, by which
+       point preload="auto" had had the clip in flight for a second or more. */
     if (reduced || frugal) {
-      v.preload = 'none';
       setPaused(true);
       return;
     }
 
-    void v.play().catch(() => {
-      setPaused(true);
-    });
+    /* play() is also the download trigger, because preload is 'none'. */
+    const start = () => {
+      void v.play().catch(() => setPaused(true));
+    };
 
-    if (!('IntersectionObserver' in window)) return;
+    /* Without an observer there is no later chance to start, so start now. */
+    if (!('IntersectionObserver' in window)) {
+      start();
+      return;
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -105,8 +123,12 @@ export default function HomeHero() {
             v.pause();
             setSoundOn(false);
           } else {
+            /* The first call here is the initial observation, delivered right
+               after observe() and after the poster has painted — that is the
+               deferred "autoplay". Every later one is a scroll-back, which
+               resumes only if the visitor had not deliberately paused. */
             setPaused((wasPaused) => {
-              if (!wasPaused) void v.play().catch(() => {});
+              if (!wasPaused) start();
               return wasPaused;
             });
           }
@@ -225,8 +247,7 @@ export default function HomeHero() {
                 loop
                 muted
                 playsInline
-                autoPlay
-                preload="auto"
+                preload="none"
                 onPlay={() => setPaused(false)}
                 onPause={() => setPaused(true)}
               />

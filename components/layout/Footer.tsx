@@ -20,7 +20,7 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
   // (mailto:, tel:, external profiles) stays a plain anchor.
   if (href.startsWith('/') && !href.startsWith('//')) {
     return (
-      <Link href={href} className={linkClass}>
+      <Link href={href} className={linkClass} prefetch={false}>
         {children}
       </Link>
     );

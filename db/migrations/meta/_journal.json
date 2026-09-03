@@ -57,6 +57,13 @@
       "when": 1788390114545,
       "tag": "0007_far_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788457223804,
+      "tag": "0008_free_bucky",
+      "breakpoints": true
     }
   ]
 }

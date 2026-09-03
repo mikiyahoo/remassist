@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
+import BlogRail from '@/components/services/BlogRail';
 import SeatTiersSection from '@/components/services/SeatTiers';
 
 export const metadata: Metadata = {
@@ -612,25 +614,16 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/hr-and-recruiting' surface='white' />
+  <BlogRail
+      surface="paper"
+      eyebrow="From the blog"
+      title={<>Reading for whoever <span>owns the shortlist.</span></>}
+      lede="Playbooks on scoping the role, ramping it, and keeping the scorecard honest — written by the people who source and manage these recruiters."
+    />
 
-  <section className={styles['hr-close']}>
-      <div className={styles['hr-wrap']}>
-        <h2>Watch it run on one stuck role first.</h2>
-        <p>The consult is free, the trial is free, and you interview the seat before it touches a
-          requisition. Bring the two roles that have been open longest and we will scope it on the call.</p>
-        <div className={styles['hr-cta-row']}>
-          <a className={`${styles['hr-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Talk to a talent specialist
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['hr-btn']} ${styles['hr-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ServiceJsonLd path='/services/hr-and-recruiting' />
+
+  <ContactRail />
     </main>
   );
 }

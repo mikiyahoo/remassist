@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  ROLES, canDelete, canEditContent, canEditLeads, canInvite, canManageUsers,
-  canUnpublishContent, canViewLeads, isRole,
+  ROLES, canDelete, canEditContent, canEditLeads, canEditRates, canInvite,
+  canManageUsers, canUnpublishContent, canViewLeads, isRole,
 } from './roles';
 
 describe('isRole', () => {
@@ -50,6 +50,22 @@ describe('canDelete', () => {
     // Access is revoked by disabling, never by deleting — a deleted row loses
     // the record of who invited whom.
     for (const role of ROLES) expect(canDelete(role), role).toBe(false);
+  });
+});
+
+describe('rate capabilities', () => {
+  it('lets only the admin edit the price list', () => {
+    // The exception to the generous content rule. A wrong word is visible and
+    // reversible; a wrong rate is quoted to a prospect in writing and the
+    // first anyone hears of it is an order at the wrong price.
+    expect(canEditRates('admin')).toBe(true);
+    expect(canEditRates('manager')).toBe(false);
+  });
+
+  it('still lets a manager read them', () => {
+    // Read access is not gated on canEditRates: a manager working a lead has
+    // to be able to see what the site quoted them.
+    for (const role of ROLES) expect(canViewLeads(role), role).toBe(true);
   });
 });
 

@@ -9,12 +9,9 @@
    own content instead of holding the 1.2 / 0.8 proportion the design is set
    in, and dropped the header's bottom margin so every section ran tight into
    its own content. */
-.eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--brand-blue);
+.eyebrow { display: inline-flex; align-items: center; color: var(--brand-blue);
   font-weight: 600; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; }
-.eyebrow::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%;
-  background: var(--brand-blue); }
 .eyebrowDark { color: #fff; }
-.eyebrowDark::before { background: #fff; }
 
 .head { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: end;
   margin: 18px 0 32px; }

@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import Image from 'next/image';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
 import SeatTiersSection from '@/components/services/SeatTiers';
 import InterviewRail from '@/components/services/InterviewRail';
 import { interviewsFor } from '@/lib/interviews';
@@ -259,25 +260,9 @@ export default function Page() {
       lede="Playbooks on scoping the seat, ramping it, and holding service quality steady — written by the people who source and manage these agents."
     />
 
-  <RelatedServices path='/services/customer-service-agents' surface='white' />
+  <ServiceJsonLd path='/services/customer-service-agents' />
 
-  <section className={styles['cx-close']}>
-      <div className={styles['cx-wrap']}>
-        <h2>Watch the queue move before you commit.</h2>
-        <p>You approve every agent before they answer a single customer, and the pilot is small on
-          purpose so you can judge the work rather than the pitch.</p>
-        <div className={styles['cx-cta-row']}>
-          <a className={`${styles['cx-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Book a free consult
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['cx-btn']} ${styles['cx-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ContactRail />
     </main>
   );
 }

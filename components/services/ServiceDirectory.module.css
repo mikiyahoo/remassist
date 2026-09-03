@@ -3,8 +3,8 @@
 
    Every value here is an existing brand token. The reference this was built to
    is a generic SaaS layout; what makes it ours is that the card radius, border,
-   shadow, blue and type all come from the same places BlogRail and
-   RelatedServices draw from, so the three sections read as one system. */
+   shadow, blue and type all come from the same places BlogRail draws from, so
+   the two sections read as one system. */
 
 /* Full height, matching the hero above it. Both cards are a fixed size now —
    the rail is six titles and the panel stack is locked to its tallest panel —
@@ -66,7 +66,7 @@
 .tabOn .tabIco svg { stroke: #fff; }
 
 /* Helper card under the rail — the estimate tool is the honest answer to
-   "which of these do I need", and it is already how RelatedServices closes. */
+   "which of these do I need". */
 .railGap { flex: 1 1 auto; min-height: 18px; }
 /* Stays light on the navy rail. Inverted to a 6% white wash it read as a
    slightly-less-navy rectangle — present but not offered. Solid paper makes it

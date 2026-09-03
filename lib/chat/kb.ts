@@ -20,6 +20,9 @@ export const CONTACT = {
   instagram: 'https://www.instagram.com/remassist',
   youtube: 'https://www.youtube.com/@RemAssistant',
   trustpilot: 'https://www.trustpilot.com/review/remassistance.com',
+  /* The Google Business Profile by CID — the place itself, not the /maps/place/…
+     URL a browser shows, which carries coordinates and a session token. */
+  google: 'https://www.google.com/maps?cid=10709335694294039363',
 };
 
 /* ---- Link targets (current Next.js routes + external) ------------------- */
@@ -503,10 +506,10 @@ export const KB: KbEntry[] = [
     chips: ['contact', 'languages', 'how_it_works'] },
 
   { id: 'reviews',
-    kw: ['review', 'reviews', 'testimonial', 'testimonials', 'trustpilot', 'reference', 'references', 'case study', 'case studies', 'client', 'clients', 'proof', 'rating', 'reputation'],
+    kw: ['review', 'reviews', 'testimonial', 'testimonials', 'trustpilot', 'google', 'google reviews', 'reference', 'references', 'case study', 'case studies', 'client', 'clients', 'proof', 'rating', 'reputation'],
     title: 'What clients say',
-    text: ['We are rated 5.0 out of 5 on Trustpilot, based on the reviews currently live — you can read them verbatim on our profile or on the Reviews page.'],
-    links: [['Read them on Trustpilot', CONTACT.trustpilot], ['Reviews', LIN.reviews], ['Book a consultation', CONTACT.book]],
+    text: ['We are rated 5.0 out of 5 on both Trustpilot and Google, across the four reviews currently live — you can read them verbatim on either profile, or side by side on the Reviews page.'],
+    links: [['Reviews', LIN.reviews], ['Read them on Trustpilot', CONTACT.trustpilot], ['Read them on Google', CONTACT.google], ['Book a consultation', CONTACT.book]],
     chips: ['quality', 'about', 'book'] },
 
   { id: 'about',

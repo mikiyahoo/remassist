@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
+import BlogRail from '@/components/services/BlogRail';
 
 export const metadata: Metadata = {
   title: 'Industry Specific',
@@ -359,25 +361,16 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/industry-specific' surface='white' />
+  <BlogRail
+      surface="paper"
+      eyebrow="From the blog"
+      title={<>Reading for whoever <span>owns the line.</span></>}
+      lede="Playbooks on scoping the desk, ramping it, and keeping the regulated work on your side — written by the people who source and manage these agents."
+    />
 
-  <section className={styles['iv-close']}>
-      <div className={styles['iv-wrap']}>
-        <h2>Tell us which desk is backing up.</h2>
-        <p>Bring the process, the system it runs in and the line you need held. You get a scope that names
-          both sides of it — and the trial is free before anything is signed.</p>
-        <div className={styles['iv-cta-row']}>
-          <a className={`${styles['iv-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Talk through your desk
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['iv-btn']} ${styles['iv-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ServiceJsonLd path='/services/industry-specific' />
+
+  <ContactRail />
     </main>
   );
 }

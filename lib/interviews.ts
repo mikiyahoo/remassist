@@ -41,6 +41,26 @@ export const INTERVIEWS: Interviewee[] = [
   { slug: 'kalkidan', name: 'Kalkidan Yilkal T.', length: '1:48' },
 ];
 
+/**
+ * The public URL of a clip, and of the poster frame grabbed from it.
+ *
+ * Derived through a function rather than written out at each call site because
+ * three places need the same string: `interviewsFor` below, the home hero's
+ * <video>, and the <link rel="preload"> in app/page.tsx that makes the hero's
+ * poster discoverable before React has rendered anything. A hand-copied path in
+ * any one of them is a silent 404 waiting for a rename.
+ *
+ * These files are NOT content-addressed, which is why /uploads and /images are
+ * capped well under a year in deploy/remassist-common.conf and next.config.ts.
+ * When a version segment is added to lift that cap, this is the only place that
+ * has to learn about it. `interviews.test.ts` asserts both against the disk.
+ */
+export const interviewVideo = (slug: string) => `/uploads/Interviews/${slug}.mp4`;
+export const interviewPoster = (slug: string) => `/images/interviews/${slug}.jpg`;
+
+/** The clip the home hero opens on. Must be one of INTERVIEWS' slugs. */
+export const HERO_INTERVIEW = 'kalkidan';
+
 export interface InterviewSeat extends Interviewee {
   position: string;
   video: string;
@@ -124,8 +144,8 @@ export function interviewsFor(service: keyof typeof POSITIONS | string): Intervi
     return {
       ...person,
       position,
-      video: `/uploads/Interviews/${person.slug}.mp4`,
-      poster: `/images/interviews/${person.slug}.jpg`,
+      video: interviewVideo(person.slug),
+      poster: interviewPoster(person.slug),
     };
   });
 }

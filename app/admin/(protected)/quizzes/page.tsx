@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import Link from 'next/link';
 import { desc, eq, isNull } from 'drizzle-orm';
 import { getDb, isDatabaseConfigured } from '@/db';
@@ -113,14 +114,14 @@ export default async function QuizzesPage({
               </div>
 
               {q.leadId ? (
-                <p className={styles.panelFoot}>
+                <p className={styles.panelIntro}>
                   <Link className={styles.rowLink} href={`/admin/leads/${q.leadId}`}>
                     Open the lead
                   </Link>
                   {q.leadEmail && <span className={styles.mono}> · {q.leadEmail}</span>}
                 </p>
               ) : (
-                <p className={styles.panelFoot}>
+                <p className={styles.panelIntro}>
                   {/* Said plainly, because the instinct on seeing an interesting
                       answer set is to look for the person attached to it. */}
                   This person did not leave an address, so there is nobody to reply to. The
@@ -132,19 +133,19 @@ export default async function QuizzesPage({
                 {orderedAnswers(q.answers).map(([key, value]) => {
                   const a = answerFor(key, value);
                   return (
-                    <div key={key}>
+                    <Fragment key={key}>
                       <dt>{questionFor(key) ?? key}</dt>
                       <dd>
                         {a.label}
                         {a.note && <span className={styles.answerNote}> — {a.note}</span>}
                       </dd>
-                    </div>
+                    </Fragment>
                   );
                 })}
               </dl>
 
               {q.result && (
-                <div className={styles.quote}>
+                <div className={`${styles.quote} ${styles.quoteDivided}`}>
                   <Quote label="Service" value={q.result.service} />
                   <Quote label="Tier" value={q.result.tier} />
                   <Quote label="Seats" value={q.result.seats} />

@@ -556,7 +556,7 @@ components/
 lib/
   quiz/{schema.ts,score.ts}     # THE single quiz implementation
 db/
-  index.ts  schema/  migrations/  seed.ts
+  index.ts  schema/  migrations/  seed-rates.mjs  seed-content.mjs
 styles/
   globals.css                   # @theme with the 121 brand tokens
 ```
@@ -858,7 +858,7 @@ npx drizzle-kit generate      # author migration SQL from schema diff
 npx drizzle-kit migrate       # apply — run as an explicit deploy step, never at request time
 ```
 
-The seed script (`db/seed.ts`) lifts today's hardcoded content into Postgres. This is a migration of
+The seed scripts (`db/seed-rates.mjs`, `db/seed-content.mjs`) lift today's hardcoded content into Postgres. This is a migration of
 **real data** and needs review, not just execution:
 
 | Source | Rows |
@@ -1352,7 +1352,7 @@ breakpoints in the page-level `<style>` blocks.
 - **Quiz parity** — all 432 combinations (§8). The highest-value test in the suite.
 - **Lead API** — valid insert, invalid payload rejected, rate limit trips, honeypot silently drops,
   `mailto:` fallback fires on a simulated 500.
-- **Seed idempotency** — running `db/seed.ts` twice produces identical row counts.
+- **Seed idempotency** — running either seed script twice produces identical row counts.
 
 ### 13.3 CI gates
 

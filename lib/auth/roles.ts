@@ -62,6 +62,21 @@ export function canEditContent(role: Role): boolean {
 }
 
 /**
+ * Editing the price list. Admin only.
+ *
+ * The exception to the rule above, and deliberately so: canEditContent is
+ * generous because a wrong word is visible and reversible. A wrong rate is
+ * neither — it is quoted to a prospect in writing, and the first anyone hears
+ * of it is a signed order at the wrong price. Managers read this screen; they
+ * do not set what the company charges.
+ *
+ * One function to widen if that turns out to be too tight.
+ */
+export function canEditRates(role: Role): boolean {
+  return role === 'admin';
+}
+
+/**
  * Content is unpublished, never deleted — the same rule as accounts, for the
  * same reason, one level down.
  *

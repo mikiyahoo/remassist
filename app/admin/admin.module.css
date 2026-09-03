@@ -43,6 +43,7 @@
   --low-50: #ecfaf1;
   --low-700: #0f5c2d;
   --high-50: #fef6e7;
+  --high-600: #d97706;
   --high-700: #a35307;
   --critical-50: #fef3f2;
   --critical-600: #b42318;
@@ -164,26 +165,80 @@
   flex-direction: column;
   gap: 8px;
 }
-.who {
+/* Footer identity block, drawn as in the prototype: initials avatar, then
+   name and "role · email" on the line under it. The role and address share a
+   line so the block stays short enough for the footer to breathe. */
+.adminCard { display: flex; align-items: center; gap: 10px; padding: 6px 8px 10px; }
+.adminName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--fg-on-dark);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adminRole {
+  font-size: 11.5px;
+  color: var(--fg-on-dark-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  background: linear-gradient(135deg, var(--brand-blue), var(--blue-700));
+  color: #fff;
+  font-weight: 700;
   font-size: 12px;
-  color: var(--fg-on-dark-muted);
-  font-family: var(--admin-mono);
-  padding: 0 12px;
-  overflow-wrap: anywhere;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.signout {
-  background: transparent;
-  border: 1px solid rgba(244, 246, 251, 0.2);
+
+/* Two compact footer links — one back to the site, one out of the admin. The
+   sign-out keeps the prototype's coral tint so it stays findable among the
+   blue-on-navy texts around it. */
+.sidebarLinks { display: flex; justify-content: space-between; gap: 8px; padding: 0 2px; }
+.sidebarLinks a, .sidebarLinks button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--fg-on-dark-muted);
-  border-radius: var(--r-sm);
-  padding: 8px 12px;
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 7px 8px;
+  border-radius: 9px;
+  border: 0;
+  background: transparent;
   cursor: pointer;
-  width: 100%;
-  text-align: left;
+  transition: background 150ms, color 150ms;
 }
-.signout:hover { border-color: var(--brand-blue); color: #fff; }
+.sidebarLinks a:hover, .sidebarLinks button:hover {
+  background: rgba(81, 141, 224, 0.12);
+  color: #fff;
+}
+.sidebarLinks .signoutLink { color: #ff9b92; }
+.sidebarLinks .signoutLink:hover {
+  background: rgba(220, 69, 56, 0.14);
+  color: #ffb4ad;
+}
+.sidebarLinks svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* ---------- main + topbar ---------- */
 .main { margin-left: 276px; min-height: 100vh; }
@@ -269,6 +324,15 @@
   flex-wrap: wrap;
 }
 .section { margin-bottom: 20px; }
+/* A note under panelHead rather than at the foot of the panel: same type,
+   no border, so it does not stack a second hairline under the head's. */
+.panelIntro {
+  padding: 14px 22px 0;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-500);
+}
 
 .notice {
   background: #fff;
@@ -376,13 +440,6 @@
 .s_won       { background: #ecfaf1; color: #0f5c2d; }
 .s_lost      { background: #fef3f2; color: #8a1a12; }
 .s_spam      { background: #f4f4f5; color: #667180; }
-.src {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-500);
-}
 
 /* ---------- pagination ---------- */
 .pager { display: flex; gap: 8px; align-items: center; }
@@ -485,7 +542,89 @@
   font-weight: 700;
 }
 .quoteValue { font-size: 17px; font-weight: 700; }
+/* For a quote strip that follows the answers directly, with no panelHead of
+   its own to divide it. */
+.quoteDivided { border-top: 1px solid var(--hairline); }
 .statusForm { display: flex; gap: 10px; align-items: center; padding: 16px 22px; flex-wrap: wrap; }
+
+/* ---------- caution banner ---------- */
+/* The prototype's amber twin of .notice, for a screen where the consequence of
+   an edit reaches outside the admin. .notice above is the informational one and
+   keeps its left-border form; this is the bordered box the Rates view uses. */
+.caution {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  background: var(--high-50);
+  border: 1px solid #f2d9ae;
+}
+.caution svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 2px;
+  color: var(--high-600);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.caution p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--high-700); }
+.cautionLead { font-weight: 700; display: block; margin-bottom: 2px; color: var(--high-700); }
+
+/* ---------- rates ---------- */
+/* Actions sit hard right so the icon pairs line up down the column whatever
+   the cells to their left contain. */
+.thActions { text-align: right; }
+
+/* A stored long label is written to read mid-sentence in a quote ("about 80
+   hrs/month"); standing alone in a table cell it wants a capital. Done in CSS
+   because it is a display concern only - the value the quote calculator reads
+   must stay exactly as it was written. */
+.cellSentence::first-letter { text-transform: uppercase; }
+
+/* A deactivated row stays visible - that is the point of deactivating rather
+   than deleting - but must not read as part of the live price list. */
+.rowOff td { color: var(--ink-500); }
+.rowOff .cellPrimary { color: var(--ink-500); font-weight: 500; }
+
+.iconBtnDanger:hover { background: var(--critical-50); color: var(--critical-600); }
+
+/* The inline edit form, in the row's own place in the table rather than on a
+   page of its own: three fields and a rate is not worth losing your place in a
+   list of four for. */
+/* Compounded with .table so it outweighs `.table td`'s own padding
+   without reaching for !important. */
+.table td.editCell { padding: 0; background: #fbfcfe; }
+.editForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 18px 22px;
+}
+.editForm .field { min-width: 8rem; }
+.editNarrow { max-width: 7rem; }
+.editWide { flex: 1 1 16rem; }
+
+/* The confirmation the caution banner promises, and the reason it is a
+   checkbox: it is submitted with the change, so the server can refuse a save
+   that never carried one. */
+.confirmCheck {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  flex: 1 1 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-700);
+  max-width: 40rem;
+}
+.confirmCheck input { margin-top: 2px; flex: none; width: 16px; height: 16px; accent-color: var(--brand-blue); }
 
 /* ---------- sign-in ---------- */
 .signinWrap {
@@ -698,34 +837,6 @@
   cursor: pointer;
 }
 .signinAlt:hover { border-color: var(--brand-blue); color: var(--blue-700); }
-.whoRole {
-  display: inline-block;
-  margin: 0 12px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(244, 246, 251, 0.2);
-  color: var(--fg-on-dark-muted);
-  font-size: 9.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-/**
- * Hidden in the collapsed rail, for the same reason .who is.
- *
- * The rule lives here rather than in the 1180px block above with its siblings,
- * and that placement is load-bearing: .whoRole is declared AFTER that block, so
- * a `display: none` up there loses to this rule's `display: inline-block` on
- * source order alone — both are single-class selectors, so specificity does not
- * break the tie. Keeping the override adjacent to the declaration it overrides
- * is the version that cannot silently stop working when the file is reordered.
- *
- * Without it the pill gets a 32px flex track in a 76px sidebar and wraps to one
- * letter per line, rendering the role as a vertical strip of characters.
- */
-@media (max-width: 1180px) {
-  .whoRole { display: none; }
-}
 
 /* ---------- settings, team and the verification banner ---------- */
 
@@ -1027,6 +1138,7 @@ a.faqQ:hover { color: var(--blue-700); }
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  text-decoration: none;
   transition: background 130ms, color 130ms;
 }
 .iconBtn svg {
@@ -1213,3 +1325,52 @@ a.glanceRow:hover { color: var(--blue-700); }
 .groupSettings > summary::before { content: '▸ '; color: #98a2b3; }
 .groupSettings[open] > summary::before { content: '▾ '; }
 .groupSettings > summary:hover { color: var(--blue-700); }
+
+/* ---------- responsive shell, ported from the prototype ---------- */
+
+/* Tablet and smaller laptops: the sidebar becomes a 76px icon rail. Labels
+   hide; every nav link centres its glyph. The footer keeps the avatar and the
+   two icon-only links (sign-out must survive on every screen size, unlike the
+   prototype's static mock where dropping it was harmless). */
+@media (max-width: 960px) {
+  .sidebar { width: 76px; padding: 16px 10px; }
+  .sidebarBrand { justify-content: center; padding: 2px 0 16px; }
+  .sidebarBrand img { height: 26px; }
+  .brandLabel, .navGroupTitle, .navLink span, .navBadge,
+  .adminCard > div, .sidebarLinks span { display: none; }
+  .navGroup { margin-top: 14px; }
+  .navLink { justify-content: center; padding: 12px 0; border-left: 0; }
+  .navLink.active { border-left: 0; border-radius: var(--r-sm); }
+  .adminCard { justify-content: center; padding: 6px 0 12px; }
+  .sidebarLinks { flex-direction: column; align-items: center; gap: 2px; padding: 0; }
+  .main { margin-left: 76px; }
+}
+
+/* Phones: the sidebar stops hugging the edge and becomes a full-width bar at
+   the top, so the content below gets the whole screen. The prototype hid its
+   footer here; this admin instead reflows it into one compact row, because a
+   real sign-out link cannot simply vanish. */
+@media (max-width: 720px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 14px 8px;
+    gap: 8px;
+  }
+  .sidebarBrand { justify-content: flex-start; padding: 0; border-bottom: 0; flex: none; }
+  .sidebarBrand img { height: 26px; }
+  .navScroll { flex: none; overflow-x: auto; display: flex; padding: 0; }
+  .navGroup { flex-direction: row; align-items: center; margin: 0 0 0 16px; gap: 2px; }
+  .navLink { min-width: 44px; }
+  .main { margin-left: 0; }
+  .sidebarFoot {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+  .adminCard { display: none; }
+}

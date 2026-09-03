@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
 import InterviewRail from '@/components/services/InterviewRail';
 import { interviewsFor } from '@/lib/interviews';
 import BlogRail from '@/components/services/BlogRail';
@@ -350,25 +351,9 @@ export default function Page() {
       lede="Playbooks on scoping the seat, ramping it, and keeping response times honest — written by the people who source and manage these technicians."
     />
 
-  <RelatedServices path='/services/managed-it' surface='white' />
+  <ServiceJsonLd path='/services/managed-it' />
 
-  <section className={styles['it-close']}>
-      <div className={styles['it-wrap']}>
-        <h2>Ready for IT that runs quietly in the background?</h2>
-        <p>Tell us what's breaking, what's overdue, or what's just never been looked at. The first
-          conversation is free, and you approve every person on your team before they touch your systems.</p>
-        <div className={styles['it-cta-row']}>
-          <a className={`${styles['it-btn']} ${styles['hv-3']}`} href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener'>
-            Talk to an IT Specialist
-            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6' /></svg>
-          </a>
-          <a className={`${styles['it-btn']} ${styles['it-btn--ghost']} ${styles['hv-4']}`} href='/pricing'>See pricing</a>
-        </div>
-      </div>
-    </section>
-  
-  
-  
+  <ContactRail />
     </main>
   );
 }

@@ -164,7 +164,7 @@ export default function StepsSection() {
           </a>
           <span className={styles.ctaNote}>
             No commitment. Free trial on every engagement.{' '}
-            <Link href="/how-it-works" className={styles.inlineLink}>See the full process</Link>
+            <Link href="/how-it-works" className={styles.inlineLink} prefetch={false}>See the full process</Link>
           </span>
         </div>
       </div>

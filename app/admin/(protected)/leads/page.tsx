@@ -5,6 +5,7 @@ import { leads } from '@/db/schema';
 import { LEAD_SOURCES } from '@/lib/leads/schema';
 import { LEAD_STATUSES, SOURCE_LABELS, formatDate } from '@/lib/leads/display';
 import { buildLeadFilters, type LeadSearch } from '@/lib/leads/query';
+import { SourceTag } from '../DashboardPanels';
 import styles from '../../admin.module.css';
 
 /**
@@ -132,30 +133,51 @@ export default async function LeadsPage({
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th scope="col">Received</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Company</th>
-                    <th scope="col">Country</th>
+                    <th scope="col">Prospect</th>
+                    <th scope="col">Contact</th>
                     <th scope="col">Source</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Received</th>
+                    <th scope="col" aria-label="Open" />
                   </tr>
                 </thead>
                 <tbody>
                   {visible.map((r) => (
                     <tr key={r.id}>
-                      <td className={`${styles.mono} ${styles.nowrap}`}>{formatDate(r.createdAt)}</td>
+                      {/* The prototype's dominant cell: the person in weight,
+                          their company under it in small grey, both inside one
+                          link to the detail page. */}
                       <td>
                         <Link className={styles.rowLink} href={`/admin/leads/${r.id}`}>
-                          {r.name || 'View'}
+                          <span className={styles.cellPrimary}>
+                            {r.name || <span className={styles.muted}>No name given</span>}
+                          </span>
                         </Link>
+                        <span className={styles.cellSecondary}>
+                          {r.company || <span className={styles.muted}>No company</span>}
+                        </span>
                       </td>
-                      <td className={styles.mono}>{r.email}</td>
-                      <td>{r.company || <span className={styles.muted}>—</span>}</td>
-                      <td>{r.country || <span className={styles.muted}>—</span>}</td>
-                      <td className={styles.src}>{SOURCE_LABELS[r.source] ?? r.source}</td>
+                      <td>
+                        <span className={styles.mono}>{r.email}</span>
+                        {r.country && <span className={styles.cellSecondary}>{r.country}</span>}
+                      </td>
+                      <td className={styles.nowrap}>
+                        <SourceTag source={r.source} />
+                      </td>
                       <td>
                         <span className={`${styles.pill} ${styles[`s_${r.status}`]}`}>{r.status}</span>
+                      </td>
+                      <td className={`${styles.mono} ${styles.nowrap}`}>{formatDate(r.createdAt)}</td>
+                      <td>
+                        <Link
+                          className={styles.iconBtn}
+                          href={`/admin/leads/${r.id}`}
+                          aria-label={`Open the lead${r.name ? ` from ${r.name}` : ''}`}
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m9 5 7 7-7 7" />
+                          </svg>
+                        </Link>
                       </td>
                     </tr>
                   ))}

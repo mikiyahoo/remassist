@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { pageOg } from '@/lib/site';
 import styles from './page.module.css';
-import RelatedServices from '@/components/services/RelatedServices';
+import { ServiceJsonLd } from '@/components/layout/JsonLd';
+import ContactRail from '@/components/services/ContactRail';
 
 export const metadata: Metadata = {
   title: 'SDR as a Service',
@@ -113,18 +114,9 @@ export default function Page() {
     
   
     
-  <RelatedServices path='/services/sdr-as-a-service' surface='white' />
+  <ServiceJsonLd path='/services/sdr-as-a-service' />
 
-  <section id='book' style={{ background: "var(--bg-marketing-paper)" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "80px 24px", textAlign: "center" }}>
-        <h2 style={{ margin: "0 auto 16px", fontFamily: "var(--font-display)", fontSize: "36px", fontWeight: 700, color: "var(--brand-navy)" }}>Put an SDR on trial — literally</h2>
-        <p style={{ margin: "0 auto 32px", fontSize: "16px", lineHeight: 1.6, color: "var(--ink-600)", maxWidth: "52ch" }}>Free consultation, free trial period. Judge us on meetings held.</p>
-        <a href='https://calendly.com/j-zemene-remassistance/new-meeting' target='_blank' rel='noopener' style={{ display: "inline-block", background: "var(--brand-blue)", color: "#fff", fontSize: "17px", fontWeight: 600, textDecoration: "none", padding: "15px 32px", borderRadius: "6px", transition: "background 150ms" }} className={styles['hv-3']}>Book a Call</a>
-      </div>
-    </section>
-  
-  
-  
+  <ContactRail />
     </main>
   );
 }
