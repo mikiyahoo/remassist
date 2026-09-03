@@ -2,9 +2,15 @@
 /**
  * Set the admin's password directly on the server.
  *
- *   cd /srv/remassist/releases/<newest>
- *   sudo sed -n 's|^DATABASE_URL=||p' /srv/remassist/shared/.env | head -1 > /tmp/u
- *   DATABASE_URL=$(cat /tmp/u) node deploy/set-admin-password.mjs; rm -f /tmp/u
+ *   cd /srv/remassist/releases/$(ls -1 /srv/remassist/releases | sort -r | head -1)
+ *   DATABASE_URL=$(sudo sed -n 's|^DATABASE_URL=||p' /srv/remassist/shared/.env | head -1) node set-admin-password.mjs
+ *
+ * Sorted by NAME, not by `ls -t`. Release directories are timestamp-named, so a
+ * reverse name sort is the newest one. Modification time is not: the deploy
+ * prunes node_modules from every release except the newest, and that `rm -rf`
+ * updates the old directory's mtime — so `ls -t | head -1` returns the one
+ * release guaranteed to have no node_modules, and this script dies on a missing
+ * `pg`. It has done exactly that.
  *
  * Why this exists alongside tools/create-admin.mts: that script imports
  * lib/auth/password.ts, so it needs Node's type stripping (22.6+). The VPS runs
