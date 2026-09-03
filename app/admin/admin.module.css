@@ -37,6 +37,8 @@
      buttons and status palette reference. */
   --ink-400: #667180;
   --ink-600: #667180;
+  --medium-50: #fef9e7;
+  --medium-700: #92670a;
   --ink-50: #f5f7fa;
   --low-50: #ecfaf1;
   --low-700: #0f5c2d;
@@ -880,10 +882,45 @@
   color: var(--ink-500);
 }
 
-/* One question and its controls. A rule between rows rather than a card each:
-   29 nested cards reads as noise, and the section panel is already the card. */
-.faqRow { border-top: 1px solid var(--hairline); }
-.faqRow:first-of-type { border-top: 0; }
+/* One question as a single compact line — the prototype's shape. A rule
+   between rows rather than a card each: 29 nested cards reads as noise, and
+   the section panel is already the card. */
+.faqRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--hairline);
+}
+.faqRow:last-child { border-bottom: 0; }
+.faqQ {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  min-width: 0;
+  flex: 1;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+a.faqQ:hover { color: var(--blue-700); }
+.faqCat {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-600);
+  background: var(--ink-50);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.actions { display: flex; gap: 2px; justify-content: flex-end; }
+.actions form { display: contents; }
+.pillLow { color: var(--low-700); background: var(--low-50); }
+.pillMed { color: var(--medium-700); background: var(--medium-50); }
+.pillNeutral { color: var(--ink-600); background: var(--ink-50); }
 
 .rowActions {
   display: flex;
@@ -1159,3 +1196,20 @@ a.glanceRow:hover { color: var(--blue-700); }
 @media (max-width: 1180px) {
   .grid2, .grid2eq { grid-template-columns: 1fr; }
 }
+
+/* Section title/anchor editing, folded away. It is touched roughly never —
+   changing an anchor breaks an inbound link — so it should not sit open above
+   the questions competing for attention. */
+.groupSettings { border-top: 1px solid var(--hairline); }
+.groupSettings > summary {
+  padding: 12px 22px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-500);
+  cursor: pointer;
+  list-style: none;
+}
+.groupSettings > summary::-webkit-details-marker { display: none; }
+.groupSettings > summary::before { content: '▸ '; color: #98a2b3; }
+.groupSettings[open] > summary::before { content: '▾ '; }
+.groupSettings > summary:hover { color: var(--blue-700); }

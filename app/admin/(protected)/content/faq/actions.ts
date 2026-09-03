@@ -34,6 +34,17 @@ function back(param: 'ok' | 'error', code: string): never {
   redirect(`/admin/content/faq?${param}=${code}`);
 }
 
+/**
+ * Back to the edit page for one question rather than to the list.
+ *
+ * Used where staying put is the useful outcome: a validation failure has to
+ * return to the form holding the text, and publishing or reordering from the
+ * edit page should not eject you from it.
+ */
+function backToItem(id: string, param: 'ok' | 'error', code: string): never {
+  redirect(`/admin/content/faq/${id}?${param}=${code}`);
+}
+
 /** The editing gate, in one place so no action can forget half of it. */
 async function assertEditor() {
   const user = await assertUser();
@@ -61,8 +72,10 @@ export async function saveFaqItem(formData: FormData): Promise<void> {
   const question = String(formData.get('question') ?? '').trim();
   const answer = String(formData.get('answer') ?? '').trim();
 
-  if (!question || !answer) back('error', 'empty');
-  if (question.length > MAX_QUESTION || answer.length > MAX_ANSWER) back('error', 'too-long');
+  if (!question || !answer) backToItem(id, 'error', 'empty');
+  if (question.length > MAX_QUESTION || answer.length > MAX_ANSWER) {
+    backToItem(id, 'error', 'too-long');
+  }
 
   const db = getDb();
   const [row] = await db
