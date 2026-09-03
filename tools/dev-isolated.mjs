@@ -20,7 +20,11 @@
  */
 import { spawn } from 'node:child_process';
 
-const port = String(Number(process.argv[2]) || 3210);
+/* Windows reserves scattered port ranges (netsh excludedportrange), and which
+   ones move between reboots — 3210 was bindable earlier in this session and is
+   not now. So the port is an argument with a default, and .claude/launch.json
+   sets autoPort so the OS picks one when the default is taken. */
+const port = String(Number(process.argv[2]) || Number(process.env.PORT) || 3210);
 const origin = `http://localhost:${port}`;
 
 const env = {

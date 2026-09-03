@@ -7,9 +7,8 @@
   .bk-hero-card { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 42px;
     align-items: center; background: #fff; border: 1px solid var(--border-default);
     border-radius: 26px; box-shadow: var(--shadow-sm); padding: clamp(30px, 4.6vw, 46px); }
-  .bk-eyebrow { display: inline-flex; align-items: center; gap: .6rem; margin: 0 0 16px;
+  .bk-eyebrow { display: inline-flex; align-items: center; margin: 0 0 16px;
     font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-blue); }
-  .bk-eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--brand-blue); }
   .bk-h1 { margin: 0; font-family: var(--font-display); font-size: clamp(30px, 3.6vw, 46px);
     line-height: 1.1; letter-spacing: -.02em; color: var(--brand-navy); }
   .bk-h1 .hl { position: relative; color: var(--brand-blue); white-space: nowrap; }
@@ -100,7 +99,6 @@
     line-height: 1.2; letter-spacing: -.3px; color: var(--brand-navy); }
   .bk-newsletter p { margin: 0; font-size: 15px; line-height: 1.7; max-width: 58ch; color: var(--ink-600); }
   .bk-newsletter .bk-eyebrow { color: var(--brand-blue); }
-  .bk-newsletter .bk-eyebrow i { background: var(--brand-blue); }
   .bk-news-form { display: flex; gap: 12px; flex-wrap: wrap; }
   .bk-news-form input { flex: 1; min-width: 230px; background: #fff;
     border: 1.5px solid rgba(0, 5, 67, .15); border-radius: 60px; padding: 15px 22px;
@@ -135,3 +133,22 @@ div.bk-card:hover .bk-meta .read svg { transform: none; }
   font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
   color: var(--ink-500); background: var(--ink-50); border-radius: 999px;
   padding: 5px 10px; white-space: nowrap; }
+
+/* The "nothing else published" line. Deliberately quiet: it replaces three
+   cards, and a large notice where a grid used to be reads as an error rather
+   than as an honest absence. */
+.bk-empty {
+  margin: 0;
+  padding: 26px 0 6px;
+  color: var(--ink-500, #667180);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+/* The grid cards are anchors now that every one links to a real post. .bk-card
+   above already sets text-decoration: none — it was written for an anchor — and
+   crucially also sets display: flex, so this rule must NOT set display: an
+   element+class selector outbids it and would collapse the card layout. Colour
+   is the only thing an anchor needs that the class does not already give it. */
+a.bk-card { color: inherit; }

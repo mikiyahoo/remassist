@@ -36,10 +36,10 @@
       "name": "rem-assist-dev-isolated",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "tools/dev-isolated.mjs",
-        "3210"
+        "tools/dev-isolated.mjs"
       ],
-      "port": 3210
+      "port": 3210,
+      "autoPort": true
     }
   ]
 }
