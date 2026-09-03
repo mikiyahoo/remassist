@@ -140,7 +140,7 @@ export default async function QuizzesPage({
                     service line, tier and price. The answers that produced the
                     estimate fold away behind the bottom arrow. */}
                 {q.result && (
-                  <div className={styles.statGrid}>
+                  <div className={styles.estimateGrid}>
                     <Quote label="Service" value={q.result.service} />
                     <Quote label="Tier" value={q.result.tier} />
                     <Quote label="Seats" value={q.result.seats} />
@@ -195,9 +195,9 @@ export default async function QuizzesPage({
 
 function Quote({ label, value }: { label: string; value?: string | number }) {
   return (
-    <div className={styles.statCard}>
-      <span className={styles.quoteLabel}>{label}</span>
-      <span className={styles.quoteValue}>
+    <div className={styles.estimateCard}>
+      <span className={styles.estimateLabel}>{label}</span>
+      <span className={styles.estimateValue}>
         {value ?? <span className={styles.none}>—</span>}
       </span>
     </div>

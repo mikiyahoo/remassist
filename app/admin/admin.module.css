@@ -501,6 +501,17 @@
 .detailGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 .detailWide { grid-column: 1 / -1; }
 
+/* The review edit page: the transcription form wide on the left, Placement in
+   a narrow 30% column on the right. Named .reviewEditGrid rather than reusing
+   .grid2/.grid2eq, which are the dashboard's 1.9fr/1fr and 50/50 pairs. */
+.reviewEditGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  gap: 24px;
+  align-items: start;
+}
+.reviewEditGrid > .section { margin-bottom: 0; }
+
 .dl { margin: 0; display: grid; grid-template-columns: minmax(8rem, 12rem) 1fr; }
 .dl > dt {
   padding: 11px 22px;
@@ -570,21 +581,48 @@
 .quoteValue { font-size: 17px; font-weight: 700; }
 
 /* One mini card per figure, so the estimate reads as stat tiles: the list
-   scans as columns of service line, tier and price. */
-.statGrid {
+   scans as columns of service line, tier and price.
+   Named .estimate-* deliberately — .statCard/.statLabel/.statValue already
+   belong to the dashboard's Stat component in this same CSS module, and two
+   rules under one name in a CSS module compile to a single class, so they
+   would bleed into each other. */
+.estimateGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 10px;
   padding: 16px 22px 0;
 }
-.statCard {
+.estimateCard {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 2px;
   padding: 10px 12px;
   background: #fbfcfe;
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
+}
+/* Label and value are explicit block lines, so "Service" always sits on its
+   own line above the value even if a global flex rule ever touches the card. */
+.estimateLabel {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-500);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.estimateValue {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-900);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 /* The answer set behind the estimate cards, folded away by default. The
@@ -1011,6 +1049,7 @@
 }
 @media (max-width: 960px) {
   .detailGrid { grid-template-columns: minmax(0, 1fr); }
+  .reviewEditGrid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 720px) {
   .sidebar {
@@ -1484,6 +1523,17 @@ a.faqQ:hover { color: var(--blue-700); }
   margin-bottom: 24px;
 }
 
+/* The reviews Sources tab: one panel per source, side by side. Two sources
+   today (Trustpilot, Google), so a two-column row rather than a stack — the
+   fields under each are short, and the two are read against each other. */
+.sourcesGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.sourcesGrid > .section { margin-bottom: 0; }
+
 /* "At a glance" — stacked sections divided by hairlines rather than separate
    panels, so the rail reads as one object beside the table. */
 .glanceSection { padding: 16px 22px; }
@@ -1603,6 +1653,7 @@ a.glanceRow:hover { color: var(--blue-700); }
 
 @media (max-width: 1180px) {
   .grid2, .grid2eq { grid-template-columns: 1fr; }
+  .sourcesGrid { grid-template-columns: 1fr; }
 }
 
 /* Settings folded behind a summary, shared by the FAQ's section titles and

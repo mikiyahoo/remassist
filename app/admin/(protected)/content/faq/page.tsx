@@ -15,8 +15,8 @@ import styles from '../../../admin.module.css';
  *
  * One flat, scannable line per question: grip, question, status pill, icon
  * actions, under a heading per section. Above it a filter bar — status tabs
- * with counts, a category dropdown, and a Questions/Sections pair — and that
- * filter bar is what replaced the previous panel per section. Six panels meant
+ * with counts, a category dropdown, and a Sections toggle — and that filter
+ * bar is what replaced the previous panel per section. Six panels meant
  * the answer to "which questions are still drafts" was to scroll all six and
  * read every pill; now it is one tab.
  *
@@ -58,8 +58,8 @@ type Status = (typeof STATUSES)[number];
  * Section titles and anchors used to be a details element at the foot of the
  * page, which put six collapsed forms below however many questions you were
  * reading. As a view it is one click from the filter bar and it gets the whole
- * panel — and the three question filters go away while it is open, because
- * they filter questions and would otherwise sit there doing nothing.
+ * panel. One pill rather than a Questions/Sections pair, because All,
+ * Published and Draft already are the questions view.
  */
 const VIEWS = ['questions', 'sections'] as const;
 type View = (typeof VIEWS)[number];
@@ -180,51 +180,59 @@ export default async function FaqListPage({
         )}
 
         <div className={styles.filterbar}>
-          {/* The question filters are hidden in the sections view rather than
-              disabled: they filter questions, and three live controls that
-              change nothing is worse than three that are not there. */}
-          {view === 'questions' && (
-            <>
-              <div className={styles.filterPills} role="group" aria-label="Filter FAQ by status">
-                <Tab
-                  href={href({ status: 'all' })}
-                  on={status === 'all'}
-                  label="All"
-                  count={total}
-                />
-                <Tab
-                  href={href({ status: 'published' })}
-                  on={status === 'published'}
-                  label="Published"
-                  count={publishedCount}
-                />
-                <Tab
-                  href={href({ status: 'draft' })}
-                  on={status === 'draft'}
-                  label="Draft"
-                  count={draftCount}
-                />
-              </div>
+          {/* The status tabs stay put in the sections view with none of them
+              lit, and clicking any of them is the way back. That beats hiding
+              them — the bar keeps its shape — and it beats leaving one lit,
+              which would claim two things are selected at once. */}
+          <div className={styles.filterPills} role="group" aria-label="Filter FAQ by status">
+            <Tab
+              href={href({ status: 'all', view: 'questions' })}
+              on={view === 'questions' && status === 'all'}
+              label="All"
+              count={total}
+            />
+            <Tab
+              href={href({ status: 'published', view: 'questions' })}
+              on={view === 'questions' && status === 'published'}
+              label="Published"
+              count={publishedCount}
+            />
+            <Tab
+              href={href({ status: 'draft', view: 'questions' })}
+              on={view === 'questions' && status === 'draft'}
+              label="Draft"
+              count={draftCount}
+            />
+          </div>
 
-              <CategoryFilter
-                groups={groups.map((g) => ({ id: g.id, title: g.title }))}
-                value={cat}
-                status={status}
-              />
-            </>
-          )}
+          {/* Selecting a category navigates without a view param, so it lands
+              on the questions too. */}
+          <CategoryFilter
+            groups={groups.map((g) => ({ id: g.id, title: g.title }))}
+            value={cat}
+            status={status}
+          />
 
           {mayEdit && (
-            <div className={styles.filterPills} role="group" aria-label="What to edit">
-              <Tab href={href({ view: 'questions' })} on={view === 'questions'} label="Questions" />
-              <Tab href={href({ view: 'sections' })} on={view === 'sections'} label="Sections" />
+            <div className={styles.filterPills} role="group" aria-label="Edit the sections">
+              {/* One pill, not a Questions/Sections pair: All, Published and
+                  Draft already are the questions view, so a Questions tab
+                  would be a fourth control saying the same thing. It toggles,
+                  so it is also the way out of the view it opens. */}
+              <Tab
+                href={href({ view: view === 'sections' ? 'questions' : 'sections' })}
+                on={view === 'sections'}
+                label="Sections"
+              />
             </div>
           )}
 
-          {mayEdit && view === 'questions' && (
+          {mayEdit && (
             <Link
               className={`${styles.btn} ${styles.btnGhost} ${styles.filterEnd}`}
-              href={href({ add: '1' })}
+              /* Forced to the questions view: the modal renders there, so
+                 adding from the sections view has to leave it. */
+              href={href({ add: '1', view: 'questions' })}
             >
               + Add question
             </Link>

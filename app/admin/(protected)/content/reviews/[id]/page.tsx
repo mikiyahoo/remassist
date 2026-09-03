@@ -5,7 +5,7 @@ import { getDb, isDatabaseConfigured } from '@/db';
 import { reviewSources, reviews } from '@/db/schema';
 import { requireUser } from '@/lib/auth/require';
 import { canEditContent } from '@/lib/auth/roles';
-import { SOURCE_LABEL, Stars } from '../display';
+import { SOURCE_LABEL } from '../display';
 import { moveReview, saveReview, setReviewPublished } from '../actions';
 import { reviewMessage } from '../messages';
 import styles from '../../../../admin.module.css';
@@ -63,7 +63,6 @@ export default async function EditReviewPage({
       rating: reviews.rating,
       published: reviews.published,
       sortOrder: reviews.sortOrder,
-      sourceUrl: reviewSources.url,
     })
     .from(reviews)
     .innerJoin(reviewSources, eq(reviews.source, reviewSources.source))
@@ -114,57 +113,11 @@ export default async function EditReviewPage({
           </p>
         )}
 
-        {/* The saved wording, laid out as the public page lays it out. Above
-            the fields rather than beside them: this is the thing being checked,
-            and it should be read before anything is typed. */}
-        <section className={`${styles.panel} ${styles.section}`}>
-          <div className={styles.panelHead}>
-            <div>
-              <h2 className={styles.panelTitle}>On the page now</h2>
-              <p className={styles.panelSub}>
-                {row.published
-                  ? 'Live on /reviews. Saving revalidates it immediately.'
-                  : 'Hidden — not on /reviews. Show it once the wording matches the source.'}
-              </p>
-            </div>
-            <span className={`${styles.pill} ${row.published ? styles.pillLow : styles.pillMed}`}>
-              {row.published ? 'Published' : 'Hidden'}
-            </span>
-          </div>
-
-          <div className={styles.review}>
-            <div className={styles.reviewMain}>
-              <Stars rating={row.rating} />
-              {row.headline && <p className={styles.reviewHead}>{row.headline}</p>}
-              <p className={styles.reviewText}>&ldquo;{row.body}&rdquo;</p>
-              <div className={styles.reviewMeta}>
-                <b>{row.author}</b>
-                <span className={styles.reviewSrc}>{label}</span>
-                <span aria-hidden="true">·</span>
-                <span>{row.dateText}</span>
-                {row.meta && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span>{row.meta}</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.panelFoot}>
-            <span>Check every correction against the original before you save it.</span>
-            <a
-              className={styles.rowLink}
-              href={row.sourceUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              Open the {label} profile ↗
-            </a>
-          </div>
-        </section>
-
+        {/* The fields, with Placement in a narrow column on the right. The
+            "On the page now" preview was dropped — the list card and the
+            source profile are both one click away, and the eye should land on
+            the boxes being corrected. */}
+        <div className={styles.reviewEditGrid}>
         <section className={`${styles.panel} ${styles.section}`}>
           <div className={styles.panelHead}>
             <div>
@@ -339,6 +292,7 @@ export default async function EditReviewPage({
             </p>
           </section>
         )}
+        </div>
       </div>
     </>
   );

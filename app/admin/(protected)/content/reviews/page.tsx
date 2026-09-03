@@ -376,7 +376,7 @@ function SourcesTab({
   mayEdit: boolean;
 }) {
   return (
-    <>
+    <div className={styles.sourcesGrid}>
       {sources.map((s) => {
         const label = SOURCE_LABEL[s.source] ?? s.source;
         return (
@@ -470,7 +470,7 @@ function SourcesTab({
           </section>
         );
       })}
-    </>
+    </div>
   );
 }
 
