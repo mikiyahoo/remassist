@@ -138,8 +138,23 @@ rm -rf "$RELEASE/.next/cache"
 if [ -n "${DATABASE_URL:-}" ]; then
   log "drizzle-kit migrate"
   npx drizzle-kit migrate
+
+  # ── Content seed, before the swap ─────────────────────────────────────────
+  # /faq, /reviews and /blog read these tables now. Migrations create them
+  # empty, so between a migration and a seed there is a window where the new
+  # code serves three pages with no content — and the seed fallback does not
+  # cover it, because a box with DATABASE_URL set queries rather than falling
+  # back. Running it here closes the window: it is inside the same
+  # before-the-swap phase as the migration, so the old release keeps serving
+  # until both have succeeded.
+  #
+  # Safe to run on every deploy by construction. db/seed-content.mjs is
+  # insert-only and matches on natural keys, so it adds what is missing and
+  # cannot overwrite anything edited in the admin.
+  log "content seed"
+  node db/seed-content.mjs
 else
-  warn "DATABASE_URL unset — skipping migrations; /api/leads will answer 503"
+  warn "DATABASE_URL unset — skipping migrations and content seed"
 fi
 
 # ── Swap and restart ────────────────────────────────────────────────────────
